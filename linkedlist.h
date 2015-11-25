@@ -1,5 +1,5 @@
 /*
-  generic singly linked list with access to last item
+  generic doubly linked list
  */
 
 #include <iostream>
@@ -15,13 +15,16 @@ public:
     LinkedList(T arr[], size_t size);
     LinkedList(initilizer_list<T>);
     bool empty();
-    T get(size_t index);
-    T getFront();
-    T getEnd();
+    size_t size();
+    T& get(size_t index);
+    T& get_front();
+    T& get_back();
     bool insert(T elem, size_t index);
     bool push_back(T elem);
-    T del(size_t index);
+    bool push_front(T elem);
+    T pop(size_t index);
     T pop_back();
+    T pop_front();
 
     ~LinkedList();
 
@@ -29,7 +32,8 @@ private:
     struct Node {
         T value;
         Node *next;
-    }
+        Node *prev;
+    };
     
     size_t _size;
     Node *_start;
