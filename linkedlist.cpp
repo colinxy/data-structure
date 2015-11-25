@@ -1,4 +1,5 @@
 #include <iostream>
+#include <initializer_list>
 #include <stdexcept>
 using namespace std;
 
@@ -24,7 +25,7 @@ LinkedList<T>::LinkedList(T arr[], size_t size) {
 }
 
 template<class T>
-LinkedList<T>::LinkedList(initilizer_list<T> elems) {
+LinkedList<T>::LinkedList(initializer_list<T> elems) {
     _size = 0;
     _start = nullptr;
     _end = nullptr;
@@ -47,7 +48,7 @@ bool LinkedList<T>::empty() {
 template<class T>
 T& LinkedList<T>::get(size_t index) {
     if (index >= _size) {
-        throw out_of_range;
+        throw out_of_range("array index out of range");
     }
 
     // TODO: optimize by choosing which end to go from
@@ -61,7 +62,7 @@ T& LinkedList<T>::get(size_t index) {
 template<class T>
 T& LinkedList<T>::get_front() {
     if (_start == nullptr) {
-        throw out_of_range;
+        throw out_of_range("array index out of range");
     }
     
     return _start->value;
@@ -70,7 +71,7 @@ T& LinkedList<T>::get_front() {
 template<class T>
 T& LinkedList<T>::get_back() {
     if (_end == nullptr) {
-        throw out_of_range;
+        throw out_of_range("array index out of range");
     }
     
     return _end->value;
@@ -183,10 +184,19 @@ template<class T>
 T LinkedList<T>::pop(size_t index) {
     // check for oversize
     if (index >= _size) {
-        throw out_of_range;
+        throw out_of_range("array index out of range");
     }
 
-    // TODO: optamize by choosing which end to go from
+    // when popping from front or back
+    // use pop_front or pop_back to evade nullptr problem
+    if (index == 0) {
+        return pop_front();
+    }
+    if (index == _size-1) {
+        return pop_back();
+    }
+
+    // TODO: optimize by choosing which end to go from
     // navigate to the index-1
     Node *current = _start;
     for (size_t i = 0; i < index-1; ++i) {
@@ -202,13 +212,29 @@ T LinkedList<T>::pop(size_t index) {
     T elem = toDel->value;
     delete toDel;
 
+    // decrease size
+    --_size;
+
     return elem;
 }
 
 template<class T>
 T LinkedList<T>::pop_back() {
     if (empty()) {
-        throw out_of_range;
+        throw out_of_range("array index out of range");
+    }
+    
+    T elem;
+
+    // deal with list that has only 1 elem
+    if (_size == 1) {
+        elem = _start->value;
+        delete _start;
+        _start = nullptr;
+        _end == nullptr;
+        _size = 0;
+        
+        return elem;
     }
 
     // change end pointer
@@ -217,8 +243,11 @@ T LinkedList<T>::pop_back() {
     _end = toDel->prev;
 
     // delete the item
-    T elem = toDel->value;
+    elem = toDel->value;
     delete toDel;
+
+    // decrease size
+    --_size;
 
     return elem;
 }
@@ -226,7 +255,20 @@ T LinkedList<T>::pop_back() {
 template<class T>
 T LinkedList<T>::pop_front() {
     if (empty()) {
-        throw out_of_range;
+        throw out_of_range("array index out of range");
+    }
+
+    T elem;
+
+    // deal with list that has only 1 elem
+    if (_size == 1) {
+        elem = _start->value;
+        delete _start;
+        _start = nullptr;
+        _end == nullptr;
+        _size = 0;
+        
+        return elem;
     }
 
     // change start pointer
@@ -235,8 +277,11 @@ T LinkedList<T>::pop_front() {
     _start = toDel->next;
 
     // delete the item
-    T elem = toDel->value;
+    elem = toDel->value;
     delete toDel;
+
+    // decrease size
+    --_size;
 
     return elem;
 }

@@ -3,6 +3,7 @@
  */
 
 #include <iostream>
+#include <initializer_list>
 
 #ifndef LINKEDLIST_H
 #define LINKEDLIST_H
@@ -13,7 +14,7 @@ class LinkedList {
 public:
     LinkedList();
     LinkedList(T arr[], size_t size);
-    LinkedList(initilizer_list<T>);
+    LinkedList(std::initializer_list<T> elems);
     bool empty();
     size_t size();
     T& get(size_t index);
@@ -34,7 +35,7 @@ private:
         Node *next;
         Node *prev;
     };
-    
+
     size_t _size;
     Node *_start;
     Node *_end;
