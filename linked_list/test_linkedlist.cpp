@@ -4,6 +4,8 @@
 #include "linkedlist.h"
 using namespace std;
 
+// TODO: test all interface of linkedlist
+
 int main() {
     // test 1: linked list of ints
     LinkedList<int> ints;
@@ -23,6 +25,8 @@ int main() {
         assert(ints.pop_front() == i);
     }
     assert(ints.size() == 0);
+    
+    cout << "all test passed" << endl;
 
     return 0;
 }

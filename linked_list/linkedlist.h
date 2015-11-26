@@ -1,8 +1,8 @@
 /*
   Generic doubly linked list
 
-  This implementation of linked list tries to
-  imitate the standard template library.
+  This implementation of linked list tries to implement
+  the interface specified in the standard template library.
  */
 
 #include <iostream>
@@ -15,17 +15,19 @@
 template<class T>
 class LinkedList {
 public:
+    // TODO: implement iterator
+    
     LinkedList();
-    LinkedList(T arr[], size_t size);
-    LinkedList(std::initializer_list<T> elems);
+    LinkedList(const LinkedList<T>& list);
+    LinkedList(const std::initializer_list<T>& elems);
     bool empty() const;
     size_t size() const;
     T& get(size_t index);
     T& get_front();
     T& get_back();
-    bool insert(T elem, size_t index);
-    bool push_back(T elem);
-    bool push_front(T elem);
+    bool insert(const T& elem, size_t index);
+    bool push_back(const T& elem);
+    bool push_front(const T& elem);
     T pop(size_t index);
     T pop_back();
     T pop_front();
@@ -60,18 +62,18 @@ LinkedList<T>::LinkedList() {
 }
 
 template<class T>
-LinkedList<T>::LinkedList(T arr[], size_t size) {
-    _size = 0;
+LinkedList<T>::LinkedList(const LinkedList<T>& list) {
+    _size = list.size();
     _start = nullptr;
     _end = nullptr;
-    
-    for (size_t i = 0; i < size; ++i) {
-        push_back(arr[i]);
+
+    for (size_t i = 0; i < _size; ++i) {
+        push_back(list.get(i));
     }
 }
 
 template<class T>
-LinkedList<T>::LinkedList(initializer_list<T> elems) {
+LinkedList<T>::LinkedList(const initializer_list<T>& elems) {
     _size = 0;
     _start = nullptr;
     _end = nullptr;
@@ -124,7 +126,7 @@ T& LinkedList<T>::get_back() {
 }
 
 template<class T>
-bool LinkedList<T>::insert(T elem, size_t index) {
+bool LinkedList<T>::insert(const T& elem, size_t index) {
     // check for oversize
     if (index >= _size) {
         return false;
@@ -161,7 +163,7 @@ bool LinkedList<T>::insert(T elem, size_t index) {
 }
 
 template<class T>
-bool LinkedList<T>::push_back(T elem) {
+bool LinkedList<T>::push_back(const T& elem) {
     // construct the Node
     Node *node = new Node;
     if (node == nullptr) {
@@ -194,7 +196,7 @@ bool LinkedList<T>::push_back(T elem) {
 }
 
 template<class T>
-bool LinkedList<T>::push_front(T elem) {
+bool LinkedList<T>::push_front(const T& elem) {
     // construct the Node
     Node *node = new Node;
     if (node == nullptr) {

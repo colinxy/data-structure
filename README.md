@@ -1,18 +1,21 @@
 Data Structure in C++
 =====================
 
-The library implements common and data structure algorithms n C++, including:
+This project consists of several mini projects and is intended
+for personal practice.
+
+Implements common data structure and algorithms in C++, including:
 
 - linked list
 - stack, queue
-- recursion: binary search, mergesort, quicksort, quick-selection
+- recursion: mergesort, quicksort, quick-selection
 - binary tree, heap
 - hash table
 
 
-Goals
+### Goals
 
 - gain proficency with the data-structure and algorithms covered
-- practice command line and text-based editor, e.g. emacs
-- get familiar with c++ compile flags
-- use a c++ testing framework, e.g. google test
+- practice command line tools and text-based editor, e.g. gdb, emacs
+- get familiar with gnu make and c++ compile flags
+- get familiar with test driven c++ development
