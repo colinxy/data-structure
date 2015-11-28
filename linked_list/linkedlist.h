@@ -7,6 +7,8 @@
 
 #include <iostream>
 #include <initializer_list>
+#include <stdexcept>
+using namespace std;
 
 #ifndef LINKEDLIST_H
 #define LINKEDLIST_H
@@ -16,15 +18,21 @@ template<class T>
 class LinkedList {
 public:
     // TODO: implement iterator
-    
+    // class iter {
+    //     
+    // }
+
     LinkedList();
     LinkedList(const LinkedList<T>& list);
-    LinkedList(const std::initializer_list<T>& elems);
+    LinkedList(const initializer_list<T>& elems);
     bool empty() const;
     size_t size() const;
-    T& get(size_t index);
-    T& get_front();
-    T& get_back();
+    const T& get(size_t index) const;
+    T&       get(size_t index);
+    const T& get_front() const;
+    T&       get_front();
+    const T& get_back() const;
+    T&       get_back();
     bool insert(const T& elem, size_t index);
     bool push_back(const T& elem);
     bool push_front(const T& elem);
@@ -37,21 +45,14 @@ public:
 private:
     struct Node {
         T value;
-        Node *next;
-        Node *prev;
+        Node *next = nullptr;
+        Node *prev = nullptr;
     };
 
     size_t _size;
-    Node *_start;
-    Node *_end;
+    Node *_start = nullptr;
+    Node *_end = nullptr;
 };
-
-#include <iostream>
-#include <initializer_list>
-#include <stdexcept>
-using namespace std;
-
-#include "linkedlist.h"
 
 
 template<class T>
@@ -63,11 +64,18 @@ LinkedList<T>::LinkedList() {
 
 template<class T>
 LinkedList<T>::LinkedList(const LinkedList<T>& list) {
-    _size = list.size();
-    _start = nullptr;
-    _end = nullptr;
+    int totalSize = list.size();
 
-    for (size_t i = 0; i < _size; ++i) {
+    // // start node
+    // Node *start = new Node;
+    // start->value = list.get_front();
+    // _start = start;
+    // // end node
+    // Node *end = new Node;
+    // end->value = list.get_back();
+    // _end = end;
+
+    for (size_t i = 0; i < totalSize; ++i) {
         push_back(list.get(i));
     }
 }
@@ -94,6 +102,20 @@ bool LinkedList<T>::empty() const {
 }
 
 template<class T>
+const T& LinkedList<T>::get(size_t index) const {
+    if (index >= _size) {
+        throw out_of_range("array index out of range");
+    }
+
+    // TODO: optimize by choosing which end to go from
+    Node *current = _start;
+    for (size_t i = 0; i < index; ++i) {
+        current = current->next;
+    }
+    return current->value;
+}
+
+template<class T>
 T& LinkedList<T>::get(size_t index) {
     if (index >= _size) {
         throw out_of_range("array index out of range");
@@ -108,12 +130,30 @@ T& LinkedList<T>::get(size_t index) {
 }
 
 template<class T>
+const T& LinkedList<T>::get_front() const {
+    if (_start == nullptr) {
+        throw out_of_range("array index out of range");
+    }
+    
+    return _start->value;
+}
+
+template<class T>
 T& LinkedList<T>::get_front() {
     if (_start == nullptr) {
         throw out_of_range("array index out of range");
     }
     
     return _start->value;
+}
+
+template<class T>
+const T& LinkedList<T>::get_back() const {
+    if (_end == nullptr) {
+        throw out_of_range("array index out of range");
+    }
+    
+    return _end->value;
 }
 
 template<class T>
@@ -138,8 +178,6 @@ bool LinkedList<T>::insert(const T& elem, size_t index) {
         return false;
     }
     node->value = elem;
-    node->next = nullptr;
-    node->prev = nullptr;
 
     // TODO: optimize by choosing which end to go from
     // navigate to the index-1
@@ -170,8 +208,6 @@ bool LinkedList<T>::push_back(const T& elem) {
         return false;
     }
     node->value = elem;
-    node->next = nullptr;
-    node->prev = nullptr;
 
     // in case the linked list is empty
     if (empty()) {
@@ -203,8 +239,6 @@ bool LinkedList<T>::push_front(const T& elem) {
         return false;
     }
     node->value = elem;
-    node->next = nullptr;
-    node->prev = nullptr;
 
     // in case the linked list is empty
     if (empty()) {
