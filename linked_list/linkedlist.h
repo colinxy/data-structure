@@ -49,17 +49,17 @@ private:
         Node *prev = nullptr;
     };
 
-    size_t _size;
-    Node *_start = nullptr;
-    Node *_end = nullptr;
+    size_t m_size;
+    Node *m_start = nullptr;
+    Node *m_end = nullptr;
 };
 
 
 template<class T>
 LinkedList<T>::LinkedList() {
-    _size = 0;
-    _start = nullptr;
-    _end = nullptr;
+    m_size = 0;
+    m_start = nullptr;
+    m_end = nullptr;
 }
 
 template<class T>
@@ -69,11 +69,11 @@ LinkedList<T>::LinkedList(const LinkedList<T>& list) {
     // // start node
     // Node *start = new Node;
     // start->value = list.get_front();
-    // _start = start;
+    // m_start = start;
     // // end node
     // Node *end = new Node;
     // end->value = list.get_back();
-    // _end = end;
+    // m_end = end;
 
     for (size_t i = 0; i < totalSize; ++i) {
         push_back(list.get(i));
@@ -82,9 +82,9 @@ LinkedList<T>::LinkedList(const LinkedList<T>& list) {
 
 template<class T>
 LinkedList<T>::LinkedList(const initializer_list<T>& elems) {
-    _size = 0;
-    _start = nullptr;
-    _end = nullptr;
+    m_size = 0;
+    m_start = nullptr;
+    m_end = nullptr;
 
     for (auto &elem : elems) {
         push_back(elem);
@@ -93,22 +93,22 @@ LinkedList<T>::LinkedList(const initializer_list<T>& elems) {
 
 template<class T>
 size_t LinkedList<T>::size() const {
-    return _size;
+    return m_size;
 }
 
 template<class T>
 bool LinkedList<T>::empty() const {
-    return _start == nullptr;
+    return m_start == nullptr;
 }
 
 template<class T>
 const T& LinkedList<T>::get(size_t index) const {
-    if (index >= _size) {
+    if (index >= m_size) {
         throw out_of_range("array index out of range");
     }
 
     // TODO: optimize by choosing which end to go from
-    Node *current = _start;
+    Node *current = m_start;
     for (size_t i = 0; i < index; ++i) {
         current = current->next;
     }
@@ -117,12 +117,12 @@ const T& LinkedList<T>::get(size_t index) const {
 
 template<class T>
 T& LinkedList<T>::get(size_t index) {
-    if (index >= _size) {
+    if (index >= m_size) {
         throw out_of_range("array index out of range");
     }
 
     // TODO: optimize by choosing which end to go from
-    Node *current = _start;
+    Node *current = m_start;
     for (size_t i = 0; i < index; ++i) {
         current = current->next;
     }
@@ -131,44 +131,44 @@ T& LinkedList<T>::get(size_t index) {
 
 template<class T>
 const T& LinkedList<T>::get_front() const {
-    if (_start == nullptr) {
+    if (m_start == nullptr) {
         throw out_of_range("array index out of range");
     }
     
-    return _start->value;
+    return m_start->value;
 }
 
 template<class T>
 T& LinkedList<T>::get_front() {
-    if (_start == nullptr) {
+    if (m_start == nullptr) {
         throw out_of_range("array index out of range");
     }
     
-    return _start->value;
+    return m_start->value;
 }
 
 template<class T>
 const T& LinkedList<T>::get_back() const {
-    if (_end == nullptr) {
+    if (m_end == nullptr) {
         throw out_of_range("array index out of range");
     }
     
-    return _end->value;
+    return m_end->value;
 }
 
 template<class T>
 T& LinkedList<T>::get_back() {
-    if (_end == nullptr) {
+    if (m_end == nullptr) {
         throw out_of_range("array index out of range");
     }
     
-    return _end->value;
+    return m_end->value;
 }
 
 template<class T>
 bool LinkedList<T>::insert(const T& elem, size_t index) {
     // check for oversize
-    if (index >= _size) {
+    if (index >= m_size) {
         return false;
     }
     
@@ -181,7 +181,7 @@ bool LinkedList<T>::insert(const T& elem, size_t index) {
 
     // TODO: optimize by choosing which end to go from
     // navigate to the index-1
-    Node *current = _start;
+    Node *current = m_start;
     for (size_t i = 0; i < index-1; ++i) {
         current = current->next;
     }
@@ -195,7 +195,7 @@ bool LinkedList<T>::insert(const T& elem, size_t index) {
     after->prev = node;
 
     // increase size
-    ++_size;
+    ++m_size;
 
     return true;
 }
@@ -211,22 +211,22 @@ bool LinkedList<T>::push_back(const T& elem) {
 
     // in case the linked list is empty
     if (empty()) {
-        _start = node;
-        _end = node;
-        _size = 1;
+        m_start = node;
+        m_end = node;
+        m_size = 1;
         return true;
     }
 
-    // update the previous node, the node that _end points to
-    _end->next = node;
+    // update the previous node, the node that m_end points to
+    m_end->next = node;
     node->next = nullptr;
-    node->prev = _end;
+    node->prev = m_end;
 
     // update the end pointer
-    _end = node;
+    m_end = node;
 
     // increase size
-    ++_size;
+    ++m_size;
 
     return true;
 }
@@ -242,22 +242,22 @@ bool LinkedList<T>::push_front(const T& elem) {
 
     // in case the linked list is empty
     if (empty()) {
-        _start = node;
-        _end = node;
-        _size = 1;
+        m_start = node;
+        m_end = node;
+        m_size = 1;
         return true;
     }
 
-    // update the next node, the node _start points to
-    _start->prev = node;
+    // update the next node, the node m_start points to
+    m_start->prev = node;
     node->prev = nullptr;
-    node->next = _start;
+    node->next = m_start;
 
     // update the start pointer
-    _start = node;
+    m_start = node;
 
     // increase size
-    ++_size;
+    ++m_size;
 
     return true;
 }
@@ -265,7 +265,7 @@ bool LinkedList<T>::push_front(const T& elem) {
 template<class T>
 T LinkedList<T>::pop(size_t index) {
     // check for oversize
-    if (index >= _size) {
+    if (index >= m_size) {
         throw out_of_range("array index out of range");
     }
 
@@ -274,13 +274,13 @@ T LinkedList<T>::pop(size_t index) {
     if (index == 0) {
         return pop_front();
     }
-    if (index == _size-1) {
+    if (index == m_size-1) {
         return pop_back();
     }
 
     // TODO: optimize by choosing which end to go from
     // navigate to the index-1
-    Node *current = _start;
+    Node *current = m_start;
     for (size_t i = 0; i < index-1; ++i) {
         current = current->next;
     }
@@ -295,7 +295,7 @@ T LinkedList<T>::pop(size_t index) {
     delete toDel;
 
     // decrease size
-    --_size;
+    --m_size;
 
     return elem;
 }
@@ -309,27 +309,27 @@ T LinkedList<T>::pop_back() {
     T elem;
 
     // deal with list that has only 1 elem
-    if (_size == 1) {
-        elem = _start->value;
-        delete _start;
-        _start = nullptr;
-        _end == nullptr;
-        _size = 0;
+    if (m_size == 1) {
+        elem = m_start->value;
+        delete m_start;
+        m_start = nullptr;
+        m_end == nullptr;
+        m_size = 0;
         
         return elem;
     }
 
     // change end pointer
-    Node *toDel = _end;
+    Node *toDel = m_end;
     toDel->prev->next = nullptr;
-    _end = toDel->prev;
+    m_end = toDel->prev;
 
     // delete the item
     elem = toDel->value;
     delete toDel;
 
     // decrease size
-    --_size;
+    --m_size;
 
     return elem;
 }
@@ -343,35 +343,35 @@ T LinkedList<T>::pop_front() {
     T elem;
 
     // deal with list that has only 1 elem
-    if (_size == 1) {
-        elem = _start->value;
-        delete _start;
-        _start = nullptr;
-        _end = nullptr;
-        _size = 0;
+    if (m_size == 1) {
+        elem = m_start->value;
+        delete m_start;
+        m_start = nullptr;
+        m_end = nullptr;
+        m_size = 0;
         
         return elem;
     }
 
     // change start pointer
-    Node *toDel = _start;
+    Node *toDel = m_start;
     toDel->next->prev = nullptr;
-    _start = toDel->next;
+    m_start = toDel->next;
 
     // delete the item
     elem = toDel->value;
     delete toDel;
 
     // decrease size
-    --_size;
+    --m_size;
 
     return elem;
 }
 
 template<class T>
 LinkedList<T>::~LinkedList() {
-    Node *current = _start;
-    for (size_t i = 0; i < _size; ++i) {
+    Node *current = m_start;
+    for (size_t i = 0; i < m_size; ++i) {
         Node *temp = current->next;
         delete current;
         current = temp;
