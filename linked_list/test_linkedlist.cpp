@@ -25,6 +25,7 @@ int main() {
     cout << "LinkedList()" << endl
          << "default constructor:\nok\n" << endl;
 
+    /*
     // LinkedList(const LinkedList<T>& list);
     LinkedList<string> linked_strings1;
     for (size_t i = 0; i < 10; ++i) {
@@ -51,6 +52,7 @@ int main() {
     }
     cout << "LinkedList(const initializer_list<T>& elems)" << endl
          << "constructor from another initializer list:\nok\n" << endl;
+    */
 
     // for (int i = 0; i < 10; ++i) {
     //     ints.push_back(i);
@@ -70,7 +72,7 @@ int main() {
     // } catch(out_of_range) {
     //     cout << "throw out_of_range exception correctly" << endl;
     // }
-    
+
     cout << "all test passed" << endl;
 
     return 0;

@@ -19,37 +19,43 @@ class LinkedList {
 public:
     // TODO: implement iterator
     // class iter {
-    //     
+    //
     // }
 
+    // constructor
     LinkedList();
-    LinkedList(const LinkedList<T>& list);
-    LinkedList(const initializer_list<T>& elems);
-    bool empty() const;
-    size_t size() const;
+    // LinkedList(const LinkedList<T>& list);
+    // LinkedList(const initializer_list<T>& elems);
+
+    bool     empty() const;
+    size_t   size() const;
+    const T& operator[] (size_t index) const;
+    T&       operator[] (size_t index);
     const T& get(size_t index) const;
     T&       get(size_t index);
     const T& get_front() const;
     T&       get_front();
     const T& get_back() const;
     T&       get_back();
-    bool insert(const T& elem, size_t index);
-    bool push_back(const T& elem);
-    bool push_front(const T& elem);
-    T pop(size_t index);
-    T pop_back();
-    T pop_front();
+    bool     insert(const T& elem, size_t index);
+    bool     push_back(const T& elem);
+    bool     push_front(const T& elem);
+    T        pop(size_t index);
+    T        pop_back();
+    T        pop_front();
 
     ~LinkedList();
 
 private:
     struct Node {
         T value;
-        Node *next = nullptr;
-        Node *prev = nullptr;
+        Node *next;
+        Node *prev;
+
+        Node(T val) : value(val), next(nullptr), prev(nullptr) {}
     };
 
-    size_t m_size;
+    size_t m_size = 0;
     Node *m_start = nullptr;
     Node *m_end = nullptr;
 };
@@ -62,6 +68,7 @@ LinkedList<T>::LinkedList() {
     m_end = nullptr;
 }
 
+/*
 template<class T>
 LinkedList<T>::LinkedList(const LinkedList<T>& list) {
     int totalSize = list.size();
@@ -80,6 +87,7 @@ LinkedList<T>::LinkedList(const LinkedList<T>& list) {
     }
 }
 
+
 template<class T>
 LinkedList<T>::LinkedList(const initializer_list<T>& elems) {
     m_size = 0;
@@ -90,6 +98,7 @@ LinkedList<T>::LinkedList(const initializer_list<T>& elems) {
         push_back(elem);
     }
 }
+*/
 
 template<class T>
 size_t LinkedList<T>::size() const {
@@ -134,7 +143,7 @@ const T& LinkedList<T>::get_front() const {
     if (m_start == nullptr) {
         throw out_of_range("array index out of range");
     }
-    
+
     return m_start->value;
 }
 
@@ -143,7 +152,7 @@ T& LinkedList<T>::get_front() {
     if (m_start == nullptr) {
         throw out_of_range("array index out of range");
     }
-    
+
     return m_start->value;
 }
 
@@ -152,7 +161,7 @@ const T& LinkedList<T>::get_back() const {
     if (m_end == nullptr) {
         throw out_of_range("array index out of range");
     }
-    
+
     return m_end->value;
 }
 
@@ -161,7 +170,7 @@ T& LinkedList<T>::get_back() {
     if (m_end == nullptr) {
         throw out_of_range("array index out of range");
     }
-    
+
     return m_end->value;
 }
 
@@ -171,7 +180,7 @@ bool LinkedList<T>::insert(const T& elem, size_t index) {
     if (index >= m_size) {
         return false;
     }
-    
+
     // construct the Node
     Node *node = new Node;
     if (node == nullptr) {
@@ -305,7 +314,7 @@ T LinkedList<T>::pop_back() {
     if (empty()) {
         throw out_of_range("array index out of range");
     }
-    
+
     T elem;
 
     // deal with list that has only 1 elem
@@ -315,7 +324,7 @@ T LinkedList<T>::pop_back() {
         m_start = nullptr;
         m_end == nullptr;
         m_size = 0;
-        
+
         return elem;
     }
 
@@ -349,7 +358,7 @@ T LinkedList<T>::pop_front() {
         m_start = nullptr;
         m_end = nullptr;
         m_size = 0;
-        
+
         return elem;
     }
 
