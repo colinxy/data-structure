@@ -13,6 +13,12 @@ int main() {
     cout << singly_linked << endl;
 
     /*******************
+     ** iterator test **
+     *******************/
+    SinglyLinked<int> other(singly_linked);
+    cout << other << endl;
+
+    /*******************
      ** accessor test **
      *******************/
     // empty

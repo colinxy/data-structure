@@ -1,6 +1,7 @@
 /*
   Generic singly linked list
 
+  Fully featured generic singly linked list with iterator
  */
 
 #include <iostream>
@@ -12,6 +13,8 @@ using namespace std;
 
 template<class T>
 class SinglyLinkedIter;
+template<class T>
+class SinglyLinkedConstIter;
 
 template<class T>
 class SinglyLinked {
@@ -26,8 +29,13 @@ public:
     friend class SinglyLinkedIter<T>;
     typedef SinglyLinkedIter<T> iterator;
 
-    iterator begin();
-    iterator end();
+    friend class SinglyLinkedConstIter<T>;
+    typedef SinglyLinkedConstIter<T> const_iterator;
+
+    iterator       begin();
+    const_iterator begin() const;
+    iterator       end();
+    const_iterator end()   const;
 
       // accessor
     bool     empty() const;
@@ -79,16 +87,31 @@ template<class T>
 class SinglyLinkedIter {
 public:
       // constructor
-    SinglyLinkedIter(SinglyLinked<T> &sl) : m_sl(sl),
-                                            m_ptr(sl.m_front) {}
+    SinglyLinkedIter(const SinglyLinked<T> &sl, size_t pos);
+    SinglyLinkedIter(const SinglyLinked<T> &sl, bool front);
 
       // operator
     SinglyLinkedIter<T>& operator++ ();
     bool                 operator== (const SinglyLinkedIter<T> &it) const;
     bool                 operator!= (const SinglyLinkedIter<T> &it) const;
-    T&                   operator* ();
+    T&                   operator*  ();
 private:
-    SinglyLinked<T> &m_sl;
+    typename SinglyLinked<T>::Node *m_ptr;
+};
+
+template<class T>
+class SinglyLinkedConstIter {
+public:
+    // constructor
+    SinglyLinkedConstIter(const SinglyLinked<T> &sl, size_t pos);
+    SinglyLinkedConstIter(const SinglyLinked<T> &sl, bool front);
+
+    // operator
+    SinglyLinkedConstIter<T>& operator++ ();
+    bool                 operator== (const SinglyLinkedConstIter<T> &it) const;
+    bool                 operator!= (const SinglyLinkedConstIter<T> &it) const;
+    T&                   operator*  ();
+private:
     typename SinglyLinked<T>::Node *m_ptr;
 };
 
@@ -100,7 +123,7 @@ private:
 
 template<class T>
 SinglyLinked<T>::SinglyLinked() : m_size(0),
-                               m_front(nullptr) {
+                                  m_front(nullptr) {
 }
 
 template<class T>
@@ -109,10 +132,10 @@ SinglyLinked<T>::SinglyLinked(const SinglyLinked<T> &sl) {
     m_front = nullptr;
     Node **end_ref = &m_front;
 
-    iterator it_end = end();
-    for (iterator it = begin(); it != end(); it++) {
+    const_iterator it_end = sl.end();
+    for (const_iterator it = sl.begin(); it != it_end; ++it) {
         *end_ref = new Node(*it);
-        *end_ref = (*end_ref)->next;
+        end_ref = &((*end_ref)->next);
     }
 }
 
@@ -132,12 +155,22 @@ SinglyLinked<T>::~SinglyLinked() {
 
 template<class T>
 SinglyLinkedIter<T> SinglyLinked<T>::begin() {
-    return SinglyLinkedIter<T>(m_front);
+    return SinglyLinkedIter<T>(*this, true);
+}
+
+template<class T>
+SinglyLinkedConstIter<T> SinglyLinked<T>::begin() const {
+    return SinglyLinkedConstIter<T>(*this, true);
 }
 
 template<class T>
 SinglyLinkedIter<T> SinglyLinked<T>::end() {
-    return SinglyLinkedIter<T>(nullptr);
+    return SinglyLinkedIter<T>(*this, false);
+}
+
+template<class T>
+SinglyLinkedConstIter<T> SinglyLinked<T>::end() const {
+    return SinglyLinkedConstIter<T>(*this, false);
 }
 
 /********************
@@ -254,30 +287,88 @@ T SinglyLinked<T>::pop(size_t index) {
 }
 
 
-/********************
- ***   Operator   ***
- ********************/
+/****************************
+ ***   SinglyLinkedIter   ***
+ ****************************/
+
+template<class T>
+SinglyLinkedIter<T>::SinglyLinkedIter(const SinglyLinked<T> &sl, size_t pos) {
+    m_ptr = sl.m_front;
+    for (size_t i = 0; i < pos; ++i) {
+        m_ptr = m_ptr->next;
+    }
+}
+
+template<class T>
+SinglyLinkedIter<T>::SinglyLinkedIter(const SinglyLinked<T> &sl, bool front) {
+    if (front) {
+        m_ptr = sl.m_front;
+    } else { // end
+        m_ptr = nullptr;
+    }
+}
 
 template<class T>
 SinglyLinkedIter<T>& SinglyLinkedIter<T>::operator++ () {
     this->m_ptr = this->m_ptr->next;
-
     return *this;
 }
 
 template<class T>
 bool SinglyLinkedIter<T>::operator== (const SinglyLinkedIter<T> &it) const {
-    return *this == it;
+    return this->m_ptr == it.m_ptr;
 }
 
 template<class T>
 bool SinglyLinkedIter<T>::operator!= (const SinglyLinkedIter<T> &it) const {
-    return *this != it;
+    return this->m_ptr != it.m_ptr;
 }
 
 template<class T>
 T&   SinglyLinkedIter<T>::operator* () {
-    return *this->value;
+    return this->m_ptr->value;
+}
+
+/*********************************
+ ***   SinglyLinkedConstIter   ***
+ *********************************/
+
+template<class T>
+SinglyLinkedConstIter<T>::SinglyLinkedConstIter(const SinglyLinked<T> &sl, size_t pos) {
+    m_ptr = sl.m_front;
+    for (size_t i = 0; i < pos; ++i) {
+        m_ptr = m_ptr->next;
+    }
+}
+
+template<class T>
+SinglyLinkedConstIter<T>::SinglyLinkedConstIter(const SinglyLinked<T> &sl, bool front) {
+    if (front) {
+        m_ptr = sl.m_front;
+    } else { // end
+        m_ptr = nullptr;
+    }
+}
+
+template<class T>
+SinglyLinkedConstIter<T>& SinglyLinkedConstIter<T>::operator++ () {
+    this->m_ptr = this->m_ptr->next;
+    return *this;
+}
+
+template<class T>
+bool SinglyLinkedConstIter<T>::operator== (const SinglyLinkedConstIter<T> &it) const {
+    return this->m_ptr == it.m_ptr;
+}
+
+template<class T>
+bool SinglyLinkedConstIter<T>::operator!= (const SinglyLinkedConstIter<T> &it) const {
+    return this->m_ptr != it.m_ptr;
+}
+
+template<class T>
+T&   SinglyLinkedConstIter<T>::operator* () {
+    return this->m_ptr->value;
 }
 
 #endif // SINGLYLINKED_H
