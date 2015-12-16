@@ -16,15 +16,17 @@ using namespace std;
 template<class T>
 class SinglyLinked {
 public:
-    // TODO: implement iterator
-    // class iter {
-    //
-    // }
-
       // constructor
     SinglyLinked();
+      // copy constructor
+    SinglyLinked(const SinglyLinked<T> &sl);
       // destructor
     ~SinglyLinked();
+
+    class iterator;
+
+    iterator begin();
+    iterator end();
 
       // accessor
     bool     empty() const;
@@ -34,25 +36,31 @@ public:
     const T& operator[] (size_t index) const;
     T&       operator[] (size_t index);
 
+      // mutator
+    bool     push_front(const T& elem);
+    bool     insert(size_t index, const T& elem);
+    // bool     insert_after(iterator it, const T& elem);
+    T        pop_front();
+    T        pop(size_t index);
+    // T        pop_after(iterator it, const T& elem);
+
       // override output stream
-    friend ostream& operator<< (ostream &output, const SinglyLinked &singly_linked) {
+    friend ostream& operator<< (ostream &output,
+                                const SinglyLinked<T> &singly_linked) {
         output << "[";
 
-        Node *current = singly_linked.m_front;
+        SinglyLinked<T>::Node *current = singly_linked.m_front;
         while (current != nullptr) {
-            output << current->value << ", ";
+            if (current->next != nullptr) {
+                output << current->value << ", ";
+            } else {
+                output << current->value;
+            }
             current = current->next;
         }
         output << "]";
         return output;
     }
-
-      // mutator
-    bool     push_front(const T& elem);
-    bool     push_back(const T& elem);
-    bool     insert(const T& elem, size_t index);
-    T        pop_front();
-    T        pop(size_t index);
 
 private:
     struct Node {
@@ -64,13 +72,23 @@ private:
 
     size_t m_size;
     Node *m_front;
-    Node **m_back_ref;
 };
 
 template<class T>
 SinglyLinked<T>::SinglyLinked() : m_size(0),
-                               m_front(nullptr),
-                               m_back_ref(&m_front) {
+                               m_front(nullptr) {
+}
+
+template<class T>
+SinglyLinked<T>::SinglyLinked(const SinglyLinked<T> &sl) {
+    m_size = sl.size();
+    Node **end_ref = &m_front;
+
+    iterator it_end = end();
+    for (iterator it = begin(); it != end(); it++) {
+        *end_ref = new Node(*it);
+        *end_ref = (*end_ref)->next;
+    }
 }
 
 template<class T>
@@ -138,22 +156,9 @@ bool SinglyLinked<T>::push_front(const T& elem) {
     return true;
 }
 
-template<class T>
-bool SinglyLinked<T>::push_back(const T& elem) {
-    Node *node = new Node(elem);
-    // fail to construct new node
-    if (node == nullptr) return false;
-
-    *m_back_ref = node;
-    m_back_ref = &node->next;
-
-    ++m_size;
-    return true;
-}
-
 // no throw
 template<class T>
-bool SinglyLinked<T>::insert(const T& elem, size_t index) {
+bool SinglyLinked<T>::insert(size_t index, const T& elem) {
     Node *node = new Node(elem);
     // fail to construct new node
     if (node == nullptr) return false;
@@ -167,12 +172,6 @@ bool SinglyLinked<T>::insert(const T& elem, size_t index) {
     Node *old_current = *current;
     *current = node;
     node->next = old_current;
-
-    // update end reference in case the
-    // node inserted is the last node
-    if (old_current == nullptr) {
-        m_back_ref = &(node->next);
-    }
 
     ++m_size;
     return true;
@@ -205,6 +204,53 @@ T SinglyLinked<T>::pop(size_t index) {
 
     --m_size;
     return elem;
+}
+
+template<class T>
+class SinglyLinked<T>::iterator {
+public:
+      // constructor
+    iterator(Node *ptr) : m_ptr(ptr) {}
+
+      // operator
+    const iterator& operator++ ();
+    bool     operator== (const iterator &it);
+    bool     operator!= (const iterator &it);
+    T        operator* ();
+private:
+    Node *m_ptr;
+};
+
+template<class T>
+SinglyLinked<T>::iterator begin() {
+    return iterator(m_front);
+}
+
+template<class T>
+SinglyLinked<T>::iterator end() {
+    return iterator(nullptr);
+}
+
+template<class T>
+const SinglyLinked<T>::iterator& SinglyLinked<T>::iterator::operator++ (const iterator &it) {
+    this->m_ptr = this->m_ptr->next;
+
+    return *this;
+}
+
+template<class T>
+bool SinglyLinked<T>::iterator::operator== (const iterator &it) const {
+    return *this == it;
+}
+
+template<class T>
+bool SinglyLinked<T>::iterator::operator!= (const iterator &it) const {
+    return *this != it;
+}
+
+template<class T>
+T& SinglyLinked<T>::iterator::operator* () const {
+    return *this->value;
 }
 
 #endif // SINGLYLINKED_H
