@@ -1,9 +1,6 @@
 /*
   Generic singly linked list
 
-  Singly linked list with optimized functionality
-  to append at the end in O(1) time using reference
-  pointer technique
  */
 
 #include <iostream>
@@ -12,6 +9,9 @@ using namespace std;
 #ifndef SINGLYLINKED_H
 #define SINGLYLINKED_H
 
+
+template<class T>
+class SinglyLinkedIter;
 
 template<class T>
 class SinglyLinked {
@@ -23,14 +23,15 @@ public:
       // destructor
     ~SinglyLinked();
 
-    class iterator;
+    friend class SinglyLinkedIter<T>;
+    typedef SinglyLinkedIter<T> iterator;
 
     iterator begin();
     iterator end();
 
       // accessor
     bool     empty() const;
-    size_t   size() const;
+    size_t   size () const;
     const T& front() const;
     T&       front();
     const T& operator[] (size_t index) const;
@@ -75,6 +76,29 @@ private:
 };
 
 template<class T>
+class SinglyLinkedIter {
+public:
+      // constructor
+    SinglyLinkedIter(SinglyLinked<T> &sl) : m_sl(sl),
+                                            m_ptr(sl.m_front) {}
+
+      // operator
+    SinglyLinkedIter<T>& operator++ ();
+    bool                 operator== (const SinglyLinkedIter<T> &it) const;
+    bool                 operator!= (const SinglyLinkedIter<T> &it) const;
+    T&                   operator* ();
+private:
+    SinglyLinked<T> &m_sl;
+    typename SinglyLinked<T>::Node *m_ptr;
+};
+
+
+/***********************
+ ***   Constructor   ***
+ ***    Destructor   ***
+ ***********************/
+
+template<class T>
 SinglyLinked<T>::SinglyLinked() : m_size(0),
                                m_front(nullptr) {
 }
@@ -82,6 +106,7 @@ SinglyLinked<T>::SinglyLinked() : m_size(0),
 template<class T>
 SinglyLinked<T>::SinglyLinked(const SinglyLinked<T> &sl) {
     m_size = sl.size();
+    m_front = nullptr;
     Node **end_ref = &m_front;
 
     iterator it_end = end();
@@ -100,6 +125,24 @@ SinglyLinked<T>::~SinglyLinked() {
         current = current->next;
     }
 }
+
+/********************
+ ***   Iterator   ***
+ ********************/
+
+template<class T>
+SinglyLinkedIter<T> SinglyLinked<T>::begin() {
+    return SinglyLinkedIter<T>(m_front);
+}
+
+template<class T>
+SinglyLinkedIter<T> SinglyLinked<T>::end() {
+    return SinglyLinkedIter<T>(nullptr);
+}
+
+/********************
+ ***   Accessor   ***
+ ********************/
 
 template<class T>
 bool SinglyLinked<T>::empty() const {
@@ -142,6 +185,10 @@ T& SinglyLinked<T>::operator[] (size_t index) {
     }
     return current->value;
 }
+
+/*******************
+ ***   Mutator   ***
+ *******************/
 
 template<class T>
 bool SinglyLinked<T>::push_front(const T& elem) {
@@ -206,50 +253,30 @@ T SinglyLinked<T>::pop(size_t index) {
     return elem;
 }
 
-template<class T>
-class SinglyLinked<T>::iterator {
-public:
-      // constructor
-    iterator(Node *ptr) : m_ptr(ptr) {}
 
-      // operator
-    const iterator& operator++ ();
-    bool     operator== (const iterator &it);
-    bool     operator!= (const iterator &it);
-    T        operator* ();
-private:
-    Node *m_ptr;
-};
+/********************
+ ***   Operator   ***
+ ********************/
 
 template<class T>
-SinglyLinked<T>::iterator begin() {
-    return iterator(m_front);
-}
-
-template<class T>
-SinglyLinked<T>::iterator end() {
-    return iterator(nullptr);
-}
-
-template<class T>
-const SinglyLinked<T>::iterator& SinglyLinked<T>::iterator::operator++ (const iterator &it) {
+SinglyLinkedIter<T>& SinglyLinkedIter<T>::operator++ () {
     this->m_ptr = this->m_ptr->next;
 
     return *this;
 }
 
 template<class T>
-bool SinglyLinked<T>::iterator::operator== (const iterator &it) const {
+bool SinglyLinkedIter<T>::operator== (const SinglyLinkedIter<T> &it) const {
     return *this == it;
 }
 
 template<class T>
-bool SinglyLinked<T>::iterator::operator!= (const iterator &it) const {
+bool SinglyLinkedIter<T>::operator!= (const SinglyLinkedIter<T> &it) const {
     return *this != it;
 }
 
 template<class T>
-T& SinglyLinked<T>::iterator::operator* () const {
+T&   SinglyLinkedIter<T>::operator* () {
     return *this->value;
 }
 
