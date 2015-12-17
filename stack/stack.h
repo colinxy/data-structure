@@ -2,12 +2,13 @@
 
 class Stack {
 public:
-    Stack(size_t=10);
+    Stack(size_t=8);
+    ~Stack();
     size_t capacity() const;
     bool empty() const;
     void push(const int&);
     int pop();
-     
+
 private:
     size_t m_capacity;
     int *m_stack;

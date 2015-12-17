@@ -1,3 +1,5 @@
+// stack.cpp
+
 #include <iostream>
 #include <stdexcept>
 #include "stack.h"
@@ -7,6 +9,10 @@ Stack::Stack(size_t capacity) {
     m_capacity = capacity;
     m_stack = new int[capacity];
     m_top = 0;
+}
+
+Stack::~Stack() {
+    delete[] m_stack;
 }
 
 size_t Stack::capacity() const {

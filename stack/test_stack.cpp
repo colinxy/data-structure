@@ -4,7 +4,7 @@
 using namespace std;
 
 void stack_test() {
-    Stack s;
+    Stack s(20);
     // push
     for (int i = 0; i < 10; ++i) {
         s.push(i);
