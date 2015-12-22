@@ -6,13 +6,13 @@
 #include "sort.h"
 using namespace std;
 
-const int SIZE = 100000;
+const int SIZE = 1000000;
+int test_sorted[SIZE];
+int  lib_sorted[SIZE];
 
 void test_sort(void (*sort_fn)(int*, int*)) {
-    int test_sorted[SIZE];
-    int  lib_sorted[SIZE];
-
     srand(time(NULL));
+
     for (int i = 0; i < SIZE; ++i) {
         test_sorted[i] = rand();
         lib_sorted[i]  = test_sorted[i];
@@ -27,9 +27,32 @@ void test_sort(void (*sort_fn)(int*, int*)) {
     }
 }
 
+void test_select(int& (*select_fn)(int*, int*, int)) {
+    int to_select[10]{1, 2, 3, 7, 4, 9, 6, 5, 8, 0};
+    assert(select_fn(to_select, to_select+10, 5) == 5);
+
+    srand(time(NULL));
+
+    for (int i = 0; i < SIZE; ++i) {
+        test_sorted[i] = rand();
+        lib_sorted[i]  = test_sorted[i];
+    }
+
+    int nth = rand();
+    while (nth >= SIZE) nth /= 2;
+    // cout << nth << endl;
+
+    sort(lib_sorted, lib_sorted+SIZE);
+    // cout << lib_sorted[nth] << endl;
+    assert(select_fn(test_sorted, test_sorted+SIZE, nth)
+           == lib_sorted[nth]);
+}
+
 int main() {
-    test_sort(&quicksort);
-    test_sort(&mergesort);
+    test_sort(quicksort);
+    test_sort(mergesort);
+
+    test_select(quickselect);
 
     cout << "all tests passed" << endl;
     return 0;

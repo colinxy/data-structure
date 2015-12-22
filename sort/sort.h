@@ -24,11 +24,9 @@ void quicksort(T *begin, T *end) {
     T &pivot  = *begin;
     T *divide = end;
 
-    for (T* elem = begin+1; elem < divide; ++elem) {
-        if (*elem > pivot) {
+    for (T* elem = begin+1; elem < divide; ++elem)
+        if (*elem > pivot)
             exchange(*(elem--), *(--divide));
-        }
-    }
 
     exchange(*begin, *(divide-1));
 
@@ -72,7 +70,38 @@ void mergesort(T *begin, T *end) {
         for (; left < mid; ++left)
             sorted[index++] = *left;
 
-    index = 0;
-    for (; begin < end; ++begin)
+    for (index = 0; begin < end; ++begin)
         *begin = sorted[index++];
+
+    delete[] sorted;
+}
+
+
+// quick-selection returns the n th order
+// statistic of the array and runs in O(n) time.
+// n th order statistic begins with 0.
+
+// NOTE: quick-selection will change the
+// order of the original array.
+
+// end is the last element past 1
+
+template <class T>
+T& quickselect(T *begin, T *end, int n) {
+    // if (n < 0 || end - begin <= n) throw "unable to find n th element";
+
+    T &pivot  = *begin;
+    T *divide = end;
+
+    for (T *elem = begin+1; elem < divide; ++elem)
+        if (pivot < *elem)
+            exchange(*elem--, *--divide);
+
+    int pivot_stat = divide - begin - 1;
+
+    if (pivot_stat == n) return *begin;
+    else if (pivot_stat > n)
+        return quickselect(begin+1, divide, n);
+    else // pivot_stat < n
+        return quickselect(divide, end, n-pivot_stat-1);
 }
