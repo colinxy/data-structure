@@ -15,15 +15,16 @@ Implements common data structure and algorithms in C++, including:
 
 ### Goals
 
-- gain proficiency with the data-structure and algorithms covered
+- gain proficiency with the data-structure and algorithms
 - practice command line tools and text-based editor, e.g. gdb, emacs
 - get familiar with gnu make and c++ compile flags
 - get familiar with test driven c++ development
 
 
-### On Track so far
+### Implemented so far
 
 - A doubly linked list using template
 - A singly linked list using template with iterator
 - A fixed size integer stack
 - A fixed size integer queue
+- Algorithms: quick sort, merge sort, quick selection
