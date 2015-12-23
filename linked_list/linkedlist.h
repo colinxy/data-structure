@@ -1,8 +1,8 @@
 /*
-  Generic doubly linked list
-
-  This implementation of linked list tries to implement
-  the interface specified in the standard template library.
+ * Generic doubly linked list
+ *
+ * This implementation of linked list tries to implement
+ * the interface specified in the standard template library.
  */
 
 #include <iostream>
@@ -17,26 +17,47 @@ using namespace std;
 template<class T>
 class LinkedList {
 public:
-    // TODO: implement iterator
-    // class iter {
-    //
-    // }
-
-    // constructor
+      // constructor
     LinkedList();
-    // LinkedList(const LinkedList<T>& list);
+    LinkedList(const LinkedList<T>& list);
     // LinkedList(const initializer_list<T>& elems);
 
+    ~LinkedList();
+
+      // iterator
+    friend class LinkedIter<T>;
+    typedef LinkedIter<T> iterator;
+
+    friend class LinkedConstIter<T>;
+    typedef LinkedConstIter<T> const_iterator;
+
+    friend class LinkedReverseIter<T>;
+    typedef LinkedReverseIter<T> reverse_iterator;
+
+    friend class LinkedReverseConstIter<T>;
+    typedef LinkedReverseConstIter<T> reverse_const_iterator;
+
+    iterator       begin();
+    const_iterator begin() const;
+    iterator       end();
+    const_iterator end()   const;
+
+    reverse_iterator       rbegin();
+    reverse_const_iterator rbegin() const;
+    reverse_iterator       rend();
+    reverse_const_iterator rend()   const;
+
+      // accessor
     bool     empty() const;
-    size_t   size() const;
+    size_t   size () const;
     const T& operator[] (size_t index) const;
     T&       operator[] (size_t index);
-    const T& get(size_t index) const;
-    T&       get(size_t index);
-    const T& get_front() const;
-    T&       get_front();
-    const T& get_back() const;
-    T&       get_back();
+    const T& front() const;
+    T&       front();
+    const T& back () const;
+    T&       back ();
+
+      // mutator
     bool     insert(const T& elem, size_t index);
     bool     push_back(const T& elem);
     bool     push_front(const T& elem);
@@ -44,28 +65,86 @@ public:
     T        pop_back();
     T        pop_front();
 
-    ~LinkedList();
-
 private:
     struct Node {
         T value;
         Node *next;
         Node *prev;
 
-        Node(T val) : value(val), next(nullptr), prev(nullptr) {}
+        Node(T val) : value(val)
+                    , next(nullptr)
+                    , prev(nullptr) {}
     };
 
-    size_t m_size = 0;
-    Node *m_start = nullptr;
-    Node *m_end = nullptr;
+    size_t m_size;
+    Node *m_start;
+    Node *m_end;
 };
 
 
 template<class T>
-LinkedList<T>::LinkedList() {
-    m_size = 0;
-    m_start = nullptr;
-    m_end = nullptr;
+class LinkedIter {
+public:
+      // constructor
+    LinkedIter(const LinkedList<T> &ll);
+
+    LinkedIter<T>& operator++ ();
+    LinkedIter<T>& operator++ (int);
+    bool           operator== (const LinkedIter<T> &it) const;
+    bool           operator!= (const LinkedIter<T> &it) const;
+    T&             operator*  ();
+
+private:
+    typename LinkedList<T>::Node *m_ptr;
+};
+
+
+template<class T>
+class LinkedConstIter {
+public:
+      // constructor
+    LinkedConstIter(const LinkedList<T> &ll);
+
+    LinkedConstIter<T>& operator++ ();
+    LinkedConstIter<T>& operator++ (int);
+    bool                operator== (const LinkedConstIter<T> &it) const;
+    bool                operator!= (const LinkedConstIter<T> &it) const;
+    T&                  operator*  ();
+
+private:
+    typename LinkedList<T>::Node *m_ptr;
+};
+
+
+template<class T>
+class LinkedReverseIter {
+public:
+      // constructor
+    LinkedReverseIter(const LinkedList<T> &ll);
+
+    LinkedReverseIter<T>& operator++ ();
+    LinkedReverseIter<T>& operator++ (int);
+    bool                  operator== (const LinkedReverseIter<T> &it) const;
+    bool                  operator!= (const LinkedReverseIter<T> &it) const;
+    T&                    operator*  ();
+
+private:
+    typename LinkedList<T>::Node *m_ptr;
+};
+
+
+template<class T>
+class LinkedReverseConstIter {
+      // constructor
+    LinkedReverseConstIter(const LinkedList<T> &ll);
+
+    LinkedReverseConstIter<T>& operator++ ();
+};
+
+template<class T>
+LinkedList<T>::LinkedList() : m_size = 0
+                            , m_start = nullptr
+                            , m_end = nullptr {
 }
 
 /*
@@ -111,7 +190,7 @@ bool LinkedList<T>::empty() const {
 }
 
 template<class T>
-const T& LinkedList<T>::get(size_t index) const {
+const T& LinkedList<T>::operator[] (size_t index) const {
     if (index >= m_size) {
         throw out_of_range("array index out of range");
     }
@@ -125,7 +204,7 @@ const T& LinkedList<T>::get(size_t index) const {
 }
 
 template<class T>
-T& LinkedList<T>::get(size_t index) {
+T& LinkedList<T>::operator[] (size_t index) {
     if (index >= m_size) {
         throw out_of_range("array index out of range");
     }
@@ -139,7 +218,7 @@ T& LinkedList<T>::get(size_t index) {
 }
 
 template<class T>
-const T& LinkedList<T>::get_front() const {
+const T& LinkedList<T>::front() const {
     if (m_start == nullptr) {
         throw out_of_range("array index out of range");
     }
@@ -148,7 +227,7 @@ const T& LinkedList<T>::get_front() const {
 }
 
 template<class T>
-T& LinkedList<T>::get_front() {
+T& LinkedList<T>::front() {
     if (m_start == nullptr) {
         throw out_of_range("array index out of range");
     }
@@ -157,7 +236,7 @@ T& LinkedList<T>::get_front() {
 }
 
 template<class T>
-const T& LinkedList<T>::get_back() const {
+const T& LinkedList<T>::back() const {
     if (m_end == nullptr) {
         throw out_of_range("array index out of range");
     }
@@ -166,7 +245,7 @@ const T& LinkedList<T>::get_back() const {
 }
 
 template<class T>
-T& LinkedList<T>::get_back() {
+T& LinkedList<T>::back() {
     if (m_end == nullptr) {
         throw out_of_range("array index out of range");
     }

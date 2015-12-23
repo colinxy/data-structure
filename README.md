@@ -23,8 +23,8 @@ Implements common data structure and algorithms in C++, including:
 
 ### Implemented so far
 
-- A doubly linked list using template
+- A doubly linked list using template with iterator
 - A singly linked list using template with iterator
 - A fixed size integer stack
 - A fixed size integer queue
-- Algorithms: quick sort, merge sort, quick selection
+- Generic algorithms: quick sort, merge sort, quick selection

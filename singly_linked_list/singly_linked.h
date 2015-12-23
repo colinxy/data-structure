@@ -1,7 +1,7 @@
 /*
-  Generic singly linked list
-
-  Fully featured generic singly linked list with iterator
+ * Generic singly linked list
+ *
+ * Fully featured generic singly linked list with iterator
  */
 
 #include <iostream>
@@ -26,6 +26,7 @@ public:
       // destructor
     ~SinglyLinked();
 
+      // iterator
     friend class SinglyLinkedIter<T>;
     typedef SinglyLinkedIter<T> iterator;
 
@@ -92,6 +93,7 @@ public:
 
       // operator
     SinglyLinkedIter<T>& operator++ ();
+    SinglyLinkedIter<T>& operator++ (int);
     bool                 operator== (const SinglyLinkedIter<T> &it) const;
     bool                 operator!= (const SinglyLinkedIter<T> &it) const;
     T&                   operator*  ();
@@ -108,6 +110,7 @@ public:
 
     // operator
     SinglyLinkedConstIter<T>& operator++ ();
+    SinglyLinkedConstIter<T>& operator++ (int);
     bool                 operator== (const SinglyLinkedConstIter<T> &it) const;
     bool                 operator!= (const SinglyLinkedConstIter<T> &it) const;
     T&                   operator*  ();
@@ -315,6 +318,13 @@ SinglyLinkedIter<T>& SinglyLinkedIter<T>::operator++ () {
 }
 
 template<class T>
+SinglyLinkedIter<T>& SinglyLinkedIter<T>::operator++ (int) {
+    SinglyLinkedIter<T> *rtn = this->m_ptr;
+    this->m_ptr = this->m_ptr->next;
+    return *rtn;
+}
+
+template<class T>
 bool SinglyLinkedIter<T>::operator== (const SinglyLinkedIter<T> &it) const {
     return this->m_ptr == it.m_ptr;
 }
@@ -354,6 +364,13 @@ template<class T>
 SinglyLinkedConstIter<T>& SinglyLinkedConstIter<T>::operator++ () {
     this->m_ptr = this->m_ptr->next;
     return *this;
+}
+
+template<class T>
+SinglyLinkedConstIter<T>& SinglyLinkedConstIter<T>::operator++ (int) {
+    SinglyLinkedConstIter<T> *rtn = this->m_ptr;
+    this->m_ptr = this->m_ptr->next;
+    return *rtn;
 }
 
 template<class T>
