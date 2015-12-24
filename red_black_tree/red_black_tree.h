@@ -32,9 +32,13 @@ private:
         Node *left;
         Node *right;
 
-        Node(const T& val) : value(val)
-                           , left(nullptr)
-                           , right(nullptr) {}
+        bool black;
+
+        Node(const T& val, bool is_black = true)
+            : value(val)
+            , left(nullptr)
+            , right(nullptr)
+            , black(is_black) {}
     }
 
       // helper function
@@ -87,6 +91,36 @@ bool RedBlackTree<T>::hasElem(const T& elem) const {
 }
 
 
+/*
+ * Both min and max functions
+ * crashes when applied to an empty tree.
+ * check if the tree is empty before applying
+ */
+
+template <class T>
+const T& RedBlackTree<T>::max() const {
+    Node *minimum (m_root);
+
+    while (minimum->left != nullptr) {
+        minimum = minimum->left;
+    }
+
+    return minimum->value;
+}
+
+
+template <class T>
+const T& RedBlackTree<T>::min() const {
+    Node *maximum (m_root);
+
+    while (maximum->right != nullptr) {
+        maximum = maximum->right;
+    }
+
+    return maximum->value;
+}
+
+
 template <class T>
 bool RedBlackTree<T>::insert(const T& elem) {
     Node *node = new Node(elem);
@@ -104,6 +138,8 @@ bool RedBlackTree<T>::insert(const T& elem) {
 
     *current = node;
     ++m_size;
+
+    // TODO: maintain red_black_tree invariant
 
     return true;
 }
@@ -135,6 +171,8 @@ bool RedBlackTree<T>::pop(const T& elem) {
     } else /* element is a leaf */ {
         delete *toDel;
         *toDel = nullptr;
+
+        --m_size;
         return true;
     }
 
@@ -145,6 +183,7 @@ bool RedBlackTree<T>::pop(const T& elem) {
     *toDel = *toSwap;
     *toSwap = nullptr;
 
+    --m_size;
     return true;
 }
 
