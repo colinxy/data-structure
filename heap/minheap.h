@@ -11,6 +11,7 @@ class MinHeap {
 public:
       // constructor
     MinHeap(size_t capacity = 8);
+      // copy constructor
     MinHeap(const MinHeap<T> &, size_t capacity = 8);
       // destructor
     ~MinHeap();
@@ -23,7 +24,7 @@ public:
       // mutator
     void push(const T&);
     T    pop();
-    T    popPush(const T&);
+    T    pop_push(const T&);
 
 private:
     void siftdown(size_t);
@@ -79,6 +80,8 @@ const T& MinHeap<T>::peek() const {
 
 template <class T>
 void MinHeap<T>::push(const T& elem) {
+    // TODO: resize the heap
+
     m_array[m_size++] = elem;
 
     size_t index = m_size - 1;
@@ -104,7 +107,7 @@ T MinHeap<T>::pop() {
 
 
 template <class T>
-T MinHeap<T>::popPush(const T& elem) {
+T MinHeap<T>::pop_push(const T& elem) {
     T toReturn (m_array[0]);
 
     m_array[0] = elem;
@@ -133,8 +136,8 @@ void MinHeap<T>::siftdown(size_t index) {
         }
 
         // both left and right are within range
-        if (m_array[index] <= m_array[left]) {
-            if (m_array[index] <= m_array[right]) {
+        if (m_array[index] < m_array[left]) {
+            if (m_array[index] < m_array[right]) {
                 return;
             } else /* m_array[index] > m_array[right] */ {
                 swap(m_array[index], m_array[right]);
@@ -144,7 +147,7 @@ void MinHeap<T>::siftdown(size_t index) {
             if (m_array[left] < m_array[right]) {
                 swap(m_array[index], m_array[left]);
                 index = left;
-            } else /* m_array[left] >= m_array[right] */ {
+            } else /* m_array[left] > m_array[right] */ {
                 swap(m_array[index], m_array[right]);
                 index = right;
             }
