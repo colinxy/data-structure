@@ -8,13 +8,37 @@
  */
 
 
-SegTreeSum::SegTreeSum(const int* &arr, size_t size) : m_size(size)
-                                                     , m_sums(computeCapacity(size)) {
+SegTreeSum::SegTreeSum(size_t size) : m_size(size)
+                                    , m_sums(computeCapacity(size)) {
+}
+
+
+SegTreeSum::SegTreeSum(int* arr, size_t size) : m_size(size)
+                                              , m_sums(computeCapacity(size)) {
     construct(arr, 0, 0, size);
 }
 
 
-int SegTreeSum::sum(size_t begin, size_t end) {
+ostream& operator<< (ostream& output, SegTreeSum sts) {
+    output << '[';
+    for (size_t i = 0; i < sts.m_sums.size(); ++i) {
+        output << sts.m_sums[i] << ", ";
+    }
+    output << ']';
+
+    return output;
+}
+
+
+size_t SegTreeSum::size() const {
+    return m_size;
+}
+
+
+int SegTreeSum::sum(size_t begin, size_t end) const {
+    if (begin == end)
+        return 0;
+
     return sumHelper(0, begin, end, 0, m_size);
 }
 
@@ -24,7 +48,7 @@ void SegTreeSum::update(int value, size_t index) {
 }
 
 
-inline size_t SegTreeSum::computeCapacity(const size_t &size) {
+inline size_t SegTreeSum::computeCapacity(size_t size) {
     size_t capacity = 1;
     while (capacity < size) {
         capacity *= 2;
@@ -33,7 +57,7 @@ inline size_t SegTreeSum::computeCapacity(const size_t &size) {
 }
 
 
-int SegTreeSum::construct(const int* &arr, size_t index, size_t begin, size_t end) {
+int SegTreeSum::construct(int* arr, size_t index, size_t begin, size_t end) {
     if (end - begin == 1) {
         m_sums[index] = arr[begin];
         return m_sums[index];
@@ -53,7 +77,7 @@ int SegTreeSum::construct(const int* &arr, size_t index, size_t begin, size_t en
 
 int SegTreeSum::sumHelper(size_t index,
                           size_t queryBegin, size_t queryEnd,
-                          size_t begin,      size_t end) {
+                          size_t begin,      size_t end) const {
 
     if (queryEnd <= begin && end <= queryEnd) {
         return m_sums[index];
@@ -68,8 +92,8 @@ int SegTreeSum::sumHelper(size_t index,
 }
 
 
-int SegTreeSum::updateHelper(const int &value, size_t index, size_t currentIndex,
-                                               size_t begin, size_t end) {
+int SegTreeSum::updateHelper(int value, size_t index, size_t currentIndex,
+                                        size_t begin, size_t end) {
     int delta;
 
     if (begin == index && end - begin == 1) {
@@ -79,7 +103,6 @@ int SegTreeSum::updateHelper(const int &value, size_t index, size_t currentIndex
     }
 
     size_t mid = begin + (end - begin) / 2;
-    size_t child;
     if (index < mid) {
         delta = updateHelper(value, index, left(index), begin, mid);
     } else {
