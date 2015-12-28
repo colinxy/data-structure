@@ -1,6 +1,6 @@
 CXX = g++
 
-PROG     = test_heap
+PROG     = test_heap.out
 CPPFLAGS = -std=c++11 -g
 OBJS 	 = test_heap.o
 

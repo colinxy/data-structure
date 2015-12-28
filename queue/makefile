@@ -1,6 +1,6 @@
 CXX = g++
 
-PROG     = test_queue
+PROG     = test_queue.out
 CPPFLAGS = -std=c++11 -g
 OBJS     = test_queue.o queue.o
 

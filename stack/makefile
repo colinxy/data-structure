@@ -1,6 +1,6 @@
 CXX = g++
 
-PROG     = test_stack
+PROG     = test_stack.out
 CPPFLAGS = -std=c++11 -g
 OBJS     = stack.o test_stack.o
 

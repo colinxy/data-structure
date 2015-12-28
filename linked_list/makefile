@@ -1,6 +1,6 @@
 CXX = g++
 
-PROG = test_linkedlist
+PROG = test_linkedlist.out
 CPPFLAGS = -std=c++11 -Wall -g
 OBJS = test_linkedlist.o
 # HDRS = linkedlist.h

@@ -1,6 +1,6 @@
 CXX = g++
 
-PROG     = test_sort
+PROG     = test_sort.out
 CPPFLAGS = -std=c++11 -g
 OBJS     = test_sort.o
 

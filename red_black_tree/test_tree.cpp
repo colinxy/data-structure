@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include "red_black_tree.h"
+using namespace std;
 
 
 int main() {

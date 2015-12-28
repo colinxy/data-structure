@@ -1,6 +1,6 @@
 CXX = g++
 
-PROG 	 = test_linked
+PROG 	 = test_linked.out
 CPPFLAGS = -std=c++11 -g
 OBJS 	 = test_linked.o
 
