@@ -1,8 +1,8 @@
 // queue.cpp
 
+#include "queue.h"
 #include <iostream>
 #include <stdexcept>
-#include "queue.h"
 using namespace std;
 
 Queue::Queue(size_t capacity) {

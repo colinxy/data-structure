@@ -1,6 +1,6 @@
+#include "stack.h"
 #include <iostream>
 #include <cassert>
-#include "stack.h"
 using namespace std;
 
 void stack_test() {

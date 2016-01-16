@@ -1,9 +1,12 @@
 // seg_tree.h
 
 
+#ifndef SEGMENT_TREE_H
+#define SEGMENT_TREE_H
+
+
 #include <iostream>
 #include <vector>
-using namespace std;
 
 
 class SegTreeSum {
@@ -12,7 +15,7 @@ public:
     SegTreeSum(int*, size_t);
 
       // override output stream for inspection purposes
-    friend ostream& operator<< (ostream&, SegTreeSum);
+    friend std::ostream& operator<< (std::ostream&, SegTreeSum);
 
     size_t size() const;
 
@@ -36,5 +39,8 @@ private:
     static size_t parent(size_t);
 
     size_t      m_size;
-    vector<int> m_sums;
+    std::vector<int> m_sums;
 };
+
+
+#endif  // SEGMENT_TREE_H

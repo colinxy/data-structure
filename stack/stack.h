@@ -1,5 +1,10 @@
 // stack.h
 
+
+#ifndef STACK_H
+#define STACK_H
+
+
 class Stack {
 public:
     Stack(size_t=8);
@@ -16,3 +21,6 @@ private:
     // m_stack[m_top-1]
     size_t m_top;
 };
+
+
+#endif  // STACK_H

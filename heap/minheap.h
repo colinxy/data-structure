@@ -1,9 +1,11 @@
 // minheap.h
 
 
-#include <iostream>
+#ifndef MINHEAP_H
+#define MINHEAP_H
+
+
 #include <utility>
-using namespace std;
 
 
 template <class T>
@@ -154,3 +156,6 @@ void MinHeap<T>::siftdown(size_t index) {
         }
     }
 }
+
+
+#endif  // MINHEAP_H

@@ -1,9 +1,11 @@
 // maxheap.h
 
 
-#include <iostream>
+#ifndef MAXHEAP_H
+#define MAXHEAP_H
+
+
 #include <utility>
-using namespace std;
 
 
 template <class T>
@@ -154,3 +156,6 @@ void MaxHeap<T>::siftdown(size_t index) {
         }
     }
 }
+
+
+#endif  // MAXHEAP_H

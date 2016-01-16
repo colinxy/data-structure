@@ -2,6 +2,7 @@
 #include <string>
 #include <cassert>
 #include "singly_linked.h"
+using namespace std;
 
 
 int main() {

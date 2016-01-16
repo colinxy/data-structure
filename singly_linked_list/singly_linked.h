@@ -1,11 +1,9 @@
+// singly_linked.h
 /*
  * Generic singly linked list
  *
  * Fully featured generic singly linked list with iterator
  */
-
-#include <iostream>
-using namespace std;
 
 #ifndef SINGLYLINKED_H
 #define SINGLYLINKED_H
@@ -15,6 +13,7 @@ template<class T>
 class SinglyLinkedIter;
 template<class T>
 class SinglyLinkedConstIter;
+
 
 template<class T>
 class SinglyLinked {
@@ -55,8 +54,8 @@ public:
     // T        pop_after(iterator it, const T& elem);
 
       // override output stream
-    friend ostream& operator<< (ostream &output,
-                                const SinglyLinked<T> &singly_linked) {
+    friend std::ostream& operator<< (std::ostream &output,
+                                     const SinglyLinked<T> &singly_linked) {
         output << "[";
 
         SinglyLinked<T>::Node *current = singly_linked.m_front;
@@ -387,5 +386,6 @@ template<class T>
 T&   SinglyLinkedConstIter<T>::operator* () {
     return this->m_ptr->value;
 }
+
 
 #endif // SINGLYLINKED_H

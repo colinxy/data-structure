@@ -1,12 +1,15 @@
-#include <iostream>
-using namespace std;
+// sort.h
 
 // WARNING: sorting method here assumes
-//          consecutive data field
+//          random access capabilities
+
+#ifndef SORT_H
+#define SORT_H
+
 
 template <class T>
 void exchange(T &a, T &b) {
-    T tmp = a;
+    T tmp(a);
     a = b;
     b = tmp;
 }
@@ -78,7 +81,7 @@ void mergesort(T *begin, T *end) {
 
 
 // quick-selection returns the n th order
-// statistic of the array and runs in O(n) time.
+// statistic of the array and runs in O(n) time in average
 // n th order statistic begins with 0.
 
 // NOTE: quick-selection will change the
@@ -105,3 +108,6 @@ T& quickselect(T *begin, T *end, int n) {
     else // pivot_stat < n
         return quickselect(divide, end, n-pivot_stat-1);
 }
+
+
+#endif  // SORT_H

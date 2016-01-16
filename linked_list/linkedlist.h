@@ -5,13 +5,12 @@
  * the interface specified in the standard template library.
  */
 
-#include <iostream>
-#include <initializer_list>
-#include <stdexcept>
-using namespace std;
 
 #ifndef LINKEDLIST_H
 #define LINKEDLIST_H
+
+#include <initializer_list>
+#include <stdexcept>
 
 
 template<class T>

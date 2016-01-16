@@ -1,8 +1,8 @@
 // red_black_tree.h
 
 
-#include <iostream>
-using namespace std;
+#ifndef RED_BLACK_TREE_H
+#define RED_BLACK_TREE_H
 
 
 template <class T>
@@ -212,3 +212,6 @@ void RedBlackTree<T>::delNodes(Node *root) {
 
     delete root;
 }
+
+
+#endif  // RED_BLACK_TREE_H

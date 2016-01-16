@@ -1,9 +1,10 @@
 // stack.cpp
 
+#include "stack.h"
 #include <iostream>
 #include <stdexcept>
-#include "stack.h"
 using namespace std;
+
 
 Stack::Stack(size_t capacity) {
     m_capacity = capacity;

@@ -3,6 +3,8 @@
 
 #include "seg_tree.h"
 
+using namespace std;
+
 /*
  * `end' is always the last element past 1
  */

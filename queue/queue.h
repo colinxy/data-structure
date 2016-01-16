@@ -1,6 +1,10 @@
 // queue.h
 // fixed size integer queue
 
+#ifndef QUEUE_H
+#define QUEUE_H
+
+
 class Queue {
 public:
     Queue(size_t capacity=8);
@@ -23,3 +27,6 @@ private:
     // the last  element is m_queue{m_back-1]
     size_t m_back;
 };
+
+
+#endif  // QUEUE_H
