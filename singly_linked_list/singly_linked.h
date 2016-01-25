@@ -1,4 +1,5 @@
 // singly_linked.h
+
 /*
  * Generic singly linked list
  *
@@ -22,6 +23,8 @@ public:
     SinglyLinked();
       // copy constructor
     SinglyLinked(const SinglyLinked<T> &sl);
+      // assignment operator
+    SinglyLinked<T> &operator= (const SinglyLinked<T> &);
       // destructor
     ~SinglyLinked();
 
@@ -146,8 +149,8 @@ SinglyLinked<T>::~SinglyLinked() {
     Node *current = m_front;
     while (current != nullptr) {
         Node *toDel = current;
-        delete toDel;
         current = current->next;
+        delete toDel;
     }
 }
 

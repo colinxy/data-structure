@@ -1,3 +1,5 @@
+// linkedlist.h
+
 /*
  * Generic doubly linked list
  *
@@ -9,9 +11,6 @@
 #ifndef LINKEDLIST_H
 #define LINKEDLIST_H
 
-#include <initializer_list>
-#include <stdexcept>
-
 
 template<class T>
 class LinkedList {
@@ -20,6 +19,8 @@ public:
     LinkedList();
     LinkedList(const LinkedList<T>& list);
     // LinkedList(const initializer_list<T>& elems);
+
+    LinkedList<T> &operator= (const LinkedList<T> &);
 
     ~LinkedList();
 
