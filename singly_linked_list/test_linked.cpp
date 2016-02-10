@@ -19,7 +19,11 @@ void test_cons() {
         list_int1.push_front(i);
 
     SinglyLinked<int> list_int2(list_int1);
-    SinglyLinked<int> list_int3(list_int1);
+    SinglyLinked<int> list_int3;
+    list_int3 = list_int1;
+
+    // self assign should work
+    list_int1 = list_int1;
 
     cout << list_int1 << endl;
     cout << list_int2 << endl;
