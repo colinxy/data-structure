@@ -12,18 +12,13 @@ int main() {
     LinkedList<int> ints;
     assert(ints.empty());
     assert(ints.size() == 0);
-    try {
-        ints.get_front();
-    } catch (out_of_range) {
-        ;
+
+    for (int i = 0; i < 10; ++i) {
+        ints.push_back(i);
+        assert(ints.back() == i);
     }
-    try {
-        ints.get_back();
-    } catch (out_of_range) {
-        ;
-    }
-    cout << "LinkedList()" << endl
-         << "default constructor:\nok\n" << endl;
+    cout << ints << endl;
+    // should be 0 1 2 3 4 5 6 7 8 9
 
     /*
     // LinkedList(const LinkedList<T>& list);
@@ -73,7 +68,6 @@ int main() {
     //     cout << "throw out_of_range exception correctly" << endl;
     // }
 
-    cout << "all test passed" << endl;
 
     return 0;
 }

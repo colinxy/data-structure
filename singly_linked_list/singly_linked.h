@@ -136,14 +136,14 @@ inline std::ostream& operator<< (std::ostream &output,
 
     typename SinglyLinked<T>::Node *current = singly_linked.m_front;
     while (current != nullptr) {
+        output << current->value;
         if (current->next != nullptr) {
-            output << current->value << ", ";
-        } else {
-            output << current->value;
-        }
+            output << ", ";
+
         current = current->next;
     }
     output << "]";
+
     return output;
 }
 
