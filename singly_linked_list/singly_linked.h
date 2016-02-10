@@ -186,7 +186,7 @@ SinglyLinked<T>::SinglyLinked(const SinglyLinked<T> &rhs)
 
 template <typename T>
 SinglyLinked<T> & SinglyLinked<T>::operator= (const SinglyLinked<T> &rhs) {
-    if (this != rhs) {
+    if (this != &rhs) {
         SinglyLinked<T> temp(rhs);
         swap(*this, temp);
     }
