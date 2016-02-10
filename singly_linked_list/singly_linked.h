@@ -58,14 +58,14 @@ public:
     T        pop(size_t index);
     // T        pop_after(iterator it, const T& elem);
 
-      // swap two linked list
+      // swap two singly linked list
     template <typename J>
     friend void swap(SinglyLinked<J> &, SinglyLinked<J> &);
 
       // override output stream
     template <typename J>
-    friend std::ostream& operator<< (std::ostream &output,
-                                     const SinglyLinked<J> &singly_linked);
+    friend std::ostream& operator<< (std::ostream &,
+                                     const SinglyLinked<J> &);
 
 private:
     struct Node {
@@ -263,9 +263,9 @@ inline T& SinglyLinked<T>::front() {
     return m_front->value;
 }
 
-// no throw
+
 template <typename T>
-const T& SinglyLinked<T>::operator[] (size_t index) const {
+inline const T& SinglyLinked<T>::operator[] (size_t index) const {
     Node *current = m_front;
     for (size_t i = 0; i < index; ++i) {
         current = current->next;
@@ -275,9 +275,8 @@ const T& SinglyLinked<T>::operator[] (size_t index) const {
 }
 
 
-// no throw
 template <typename T>
-T& SinglyLinked<T>::operator[] (size_t index) {
+inline T& SinglyLinked<T>::operator[] (size_t index) {
     Node *current = m_front;
     for (size_t i = 0; i < index; ++i) {
         current = current->next;
