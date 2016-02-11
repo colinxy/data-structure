@@ -202,13 +202,17 @@ LinkedList<T>::LinkedList()
 
 template <typename T>
 LinkedList<T>::LinkedList(const LinkedList<T>& rhs)
-    : m_size(rhs.size())
-    , m_head(nullptr) {
+    : m_size(0) {
 
-    const Node *elem_rhs = rhs.m_head;
+    m_head = new Node(T());
+    m_head->next = m_head;
+    m_head->prev = m_head;
 
-    for (size_t i = 0; i < size(); ++i) {
+    const Node *elem_rhs = rhs.m_head->next;
+
+    for (size_t i = 0; i < rhs.size(); ++i) {
         push_back(elem_rhs->value);
+        elem_rhs = elem_rhs->next;
     }
 }
 
@@ -217,7 +221,7 @@ template <typename T>
 LinkedList<T> & LinkedList<T>::operator= (const LinkedList<T> &rhs) {
     if (this != &rhs) {
         LinkedList<T> temp(rhs);
-        swap(*this, rhs);
+        swap(*this, temp);
     }
 
     return *this;
@@ -398,7 +402,7 @@ T LinkedList<T>::pop_back() {
 
 template <typename T>
 T LinkedList<T>::pop_front() {
-    T elem(m_head->prev->value);
+    T elem(m_head->next->value);
 
     // will break when pop from empty linkedlist
     Node *toDel = m_head->next;
