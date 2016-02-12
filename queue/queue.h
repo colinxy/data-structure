@@ -26,7 +26,7 @@ public:
     void push_back(int);
     int  pop_front();
 
-      // override swap
+      // overload swap
     friend void swap(Queue &, Queue &);
 
 private:

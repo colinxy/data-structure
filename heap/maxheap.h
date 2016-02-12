@@ -1,6 +1,12 @@
 // maxheap.h
 
 
+/*
+ * Generic Maximum Heap
+ * Object has to be default constructable
+ */
+
+
 #ifndef MAXHEAP_H
 #define MAXHEAP_H
 
@@ -8,7 +14,7 @@
 #include <utility>  // for std::swap
 
 
-template <class T>
+template <typename T>
 class MaxHeap {
 public:
       // constructor
@@ -30,8 +36,9 @@ public:
     T    pop();
     T    pop_push(const T&);
 
-      // override swap
-    friend void swap(MaxHeap<T> &, MaxHeap<T> &);
+      // overload swap
+    template <typename J>
+    friend void swap(MaxHeap<J> &, MaxHeap<J> &);
 
 private:
     void siftdown(std::size_t);
@@ -42,7 +49,7 @@ private:
 };
 
 
-template <class T>
+template <typename T>
 MaxHeap<T>::MaxHeap(std::size_t capacity)
     : m_capacity(capacity)
     , m_size(0) {
@@ -51,7 +58,7 @@ MaxHeap<T>::MaxHeap(std::size_t capacity)
 }
 
 
-template <class T>
+template <typename T>
 MaxHeap<T>::MaxHeap(const MaxHeap<T> &mh, std::size_t capacity) {
     if (capacity < mh.size())
         capacity = mh.size();
@@ -75,7 +82,7 @@ MaxHeap<T> & MaxHeap<T>::operator= (const MaxHeap<T> &rhs) {
 }
 
 
-template <class T>
+template <typename T>
 MaxHeap<T>::~MaxHeap() {
     delete[] m_array;
 }
@@ -89,25 +96,25 @@ void swap(MaxHeap<T> &lhs, MaxHeap<T> &rhs) {
 }
 
 
-template <class T>
-std::size_t MaxHeap<T>::capacity() const {
+template <typename T>
+inline std::size_t MaxHeap<T>::capacity() const {
     return m_capacity;
 }
 
 
-template <class T>
-std::size_t MaxHeap<T>::size() const {
+template <typename T>
+inline std::size_t MaxHeap<T>::size() const {
     return m_size;
 }
 
 
-template <class T>
-const T& MaxHeap<T>::peek() const {
+template <typename T>
+inline const T& MaxHeap<T>::peek() const {
     return m_array[0];
 }
 
 
-template <class T>
+template <typename T>
 void MaxHeap<T>::push(const T& elem) {
     // TODO: resize the heap
 
@@ -123,7 +130,7 @@ void MaxHeap<T>::push(const T& elem) {
 }
 
 
-template <class T>
+template <typename T>
 T MaxHeap<T>::pop() {
     T toReturn (m_array[0]);
 
@@ -135,7 +142,7 @@ T MaxHeap<T>::pop() {
 }
 
 
-template <class T>
+template <typename T>
 T MaxHeap<T>::pop_push(const T& elem) {
     T toReturn (m_array[0]);
 
@@ -147,7 +154,8 @@ T MaxHeap<T>::pop_push(const T& elem) {
 }
 
 
-template <class T>
+// move m_array[0] to appropriate location
+template <typename T>
 void MaxHeap<T>::siftdown(std::size_t index) {
     while (index < m_size) {
         std::size_t left  = index * 2 + 1;

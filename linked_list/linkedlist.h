@@ -73,7 +73,7 @@ public:
     template <typename J>
     friend void swap(LinkedList<J> &, LinkedList<J> &);
 
-      // override output stream
+      // overload output stream
     template <typename J>
     friend std::ostream& operator<< (std::ostream &output,
                                      const LinkedList<J> &);

@@ -65,7 +65,7 @@ public:
     template <typename J>
     friend void swap(SinglyLinked<J> &, SinglyLinked<J> &);
 
-      // override output stream
+      // overload output stream
     template <typename J>
     friend std::ostream& operator<< (std::ostream &,
                                      const SinglyLinked<J> &);

@@ -19,7 +19,7 @@ public:
     void push(const int&);
     int  pop();
 
-    // override swap
+    // overload swap
     friend void swap(Stack &, Stack &);
 
 private:

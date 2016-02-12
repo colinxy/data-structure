@@ -1,7 +1,9 @@
 CXX = g++
 
 PROG     = test_heap.out
-CPPFLAGS = -std=c++11 -g
+CPPFLAGS = -std=c++11 -Wall -Wextra \
+           -Wno-sign-compare -Werror=return-type \
+           -fsanitize=address -fno-omit-frame-pointer
 OBJS 	 = test_heap.o
 
 $(PROG) : $(OBJS)
