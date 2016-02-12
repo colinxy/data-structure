@@ -1,7 +1,11 @@
-#include "stack.h"
+// test_stack.cpp
+
+
 #include <iostream>
 #include <cassert>
+#include "stack.h"
 using namespace std;
+
 
 void stack_test() {
     Stack s(20);
@@ -34,6 +38,7 @@ void stack_test() {
         cout << "correctly throw underflow error" << endl;
     }
 }
+
 
 int main() {
     stack_test();
