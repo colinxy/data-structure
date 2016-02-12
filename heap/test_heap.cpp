@@ -1,13 +1,13 @@
 // test_heap.cpp
 
 
+#include "maxheap.h"
+#include "minheap.h"
 #include <iostream>
 #include <cassert>
 #include <cstdlib>
 #include <ctime>
 #include <algorithm>
-#include "minheap.h"
-#include "maxheap.h"
 using namespace std;
 
 

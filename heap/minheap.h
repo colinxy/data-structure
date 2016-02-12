@@ -4,8 +4,8 @@
 #ifndef MINHEAP_H
 #define MINHEAP_H
 
-
-#include <utility>
+#include <cstddef>  // for std::size_t
+#include <utility>  // for std::swap
 
 
 template <class T>

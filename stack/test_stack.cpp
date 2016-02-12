@@ -1,9 +1,9 @@
 // test_stack.cpp
 
 
+#include "stack.h"
 #include <iostream>
 #include <cassert>
-#include "stack.h"
 using namespace std;
 
 

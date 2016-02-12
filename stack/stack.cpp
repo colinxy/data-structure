@@ -1,10 +1,10 @@
 // stack.cpp
 
 
+#include "stack.h"
 #include <iostream>
 #include <utility>
 #include <stdexcept>
-#include "stack.h"
 using namespace std;
 
 
@@ -60,14 +60,16 @@ bool Stack::empty() const {
 
 
 void Stack::push(const int &elem) {
-    if (m_top >= m_capacity) throw overflow_error("cannot push to a full stack");
+    if (m_top >= m_capacity)
+        throw overflow_error("cannot push to a full stack");
 
     m_stack[m_top++] = elem;
 }
 
 
 int Stack::pop() {
-    if (m_top == 0) throw underflow_error("cannot pop from an empty stack");
+    if (m_top == 0)
+        throw underflow_error("cannot pop from an empty stack");
 
     --m_top;
     return m_stack[m_top];

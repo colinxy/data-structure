@@ -4,13 +4,16 @@
 /*
  * Generic circular doubly linked list with dummy node
  *
- * This implementation of linked list tries to implement
+ * This implementation of linked list tries to imitate
  * the interface specified in the standard template library.
  */
 
 
 #ifndef LINKEDLIST_H
 #define LINKEDLIST_H
+
+#include <ostream>  // for std::ostream
+#include <cstddef>  // for std::size_t
 
 
 template <typename T>
@@ -49,20 +52,20 @@ public:
     // reverse_const_iterator rend()   const;
 
       // accessor
-    bool     empty() const;
-    size_t   size () const;
-    const T& operator[] (size_t index) const;
-    T&       operator[] (size_t index);
-    const T& front() const;
-    T&       front();
-    const T& back () const;
-    T&       back ();
+    bool        empty() const;
+    std::size_t size () const;
+    const T&    operator[] (std::size_t index) const;
+    T&          operator[] (std::size_t index);
+    const T&    front() const;
+    T&          front();
+    const T&    back () const;
+    T&          back ();
 
       // mutator
-    void     insert(const T& elem, size_t index);
+    void     insert(const T& elem, std::size_t index);
     void     push_back(const T& elem);
     void     push_front(const T& elem);
-    T        pop(size_t index);
+    T        pop(std::size_t index);
     T        pop_back();
     T        pop_front();
 
@@ -87,14 +90,14 @@ private:
             , prev(prv) {}
     };
 
-    size_t m_size;
-    Node  *m_head;
+    std::size_t m_size;
+    Node       *m_head;
 };
 
 
 template <typename T>
 inline void swap(LinkedList<T> &lhs, LinkedList<T> &rhs) {
-    size_t size = lhs.m_size;
+    std::size_t size = lhs.m_size;
     lhs.m_size = rhs.m_size;
     rhs.m_size = size;
 
@@ -210,7 +213,7 @@ LinkedList<T>::LinkedList(const LinkedList<T>& rhs)
 
     const Node *elem_rhs = rhs.m_head->next;
 
-    for (size_t i = 0; i < rhs.size(); ++i) {
+    for (std::size_t i = 0; i < rhs.size(); ++i) {
         push_back(elem_rhs->value);
         elem_rhs = elem_rhs->next;
     }
@@ -258,7 +261,7 @@ LinkedList<T>::~LinkedList() {
  ********************/
 
 template <typename T>
-inline size_t LinkedList<T>::size() const {
+inline std::size_t LinkedList<T>::size() const {
     return m_size;
 }
 
@@ -270,10 +273,10 @@ inline bool LinkedList<T>::empty() const {
 
 
 template <typename T>
-inline const T& LinkedList<T>::operator[] (size_t index) const {
+inline const T& LinkedList<T>::operator[] (std::size_t index) const {
     // TODO: optimize by choosing which end to go from
     Node *current = m_head->next;
-    for (size_t i = 0; i < index; ++i) {
+    for (std::size_t i = 0; i < index; ++i) {
         current = current->next;
     }
     return current->value;
@@ -281,10 +284,10 @@ inline const T& LinkedList<T>::operator[] (size_t index) const {
 
 
 template <typename T>
-inline T& LinkedList<T>::operator[] (size_t index) {
+inline T& LinkedList<T>::operator[] (std::size_t index) {
     // TODO: optimize by choosing which end to go from
     Node *current = m_head->next;
-    for (size_t i = 0; i < index; ++i) {
+    for (std::size_t i = 0; i < index; ++i) {
         current = current->next;
     }
     return current->value;
@@ -320,9 +323,9 @@ inline T& LinkedList<T>::back() {
  *******************/
 
 template <typename T>
-void LinkedList<T>::insert(const T& elem, size_t index) {
+void LinkedList<T>::insert(const T& elem, std::size_t index) {
     Node *current = m_head->next;
-    for (size_t i = 0; i < index; ++i) {
+    for (std::size_t i = 0; i < index; ++i) {
         current = current->next;
     }
 
@@ -338,7 +341,7 @@ void LinkedList<T>::insert(const T& elem, size_t index) {
 
 
 template <typename T>
-void LinkedList<T>::push_back(const T& elem) {
+inline void LinkedList<T>::push_back(const T& elem) {
     // construct the Node
     Node *node = new Node(elem, m_head, m_head->prev);
 
@@ -351,7 +354,7 @@ void LinkedList<T>::push_back(const T& elem) {
 
 
 template <typename T>
-void LinkedList<T>::push_front(const T& elem) {
+inline void LinkedList<T>::push_front(const T& elem) {
     // construct the Node
     Node *node = new Node(elem, m_head->next, m_head);
 
@@ -364,9 +367,9 @@ void LinkedList<T>::push_front(const T& elem) {
 
 
 template <typename T>
-T LinkedList<T>::pop(size_t index) {
+T LinkedList<T>::pop(std::size_t index) {
     Node *current = m_head->next;
-    for (size_t i = 0; i < index; ++i) {
+    for (std::size_t i = 0; i < index; ++i) {
         current = current->next;
     }
 
@@ -383,7 +386,7 @@ T LinkedList<T>::pop(size_t index) {
 }
 
 template <typename T>
-T LinkedList<T>::pop_back() {
+inline T LinkedList<T>::pop_back() {
     T elem(m_head->prev->value);
 
     // will break when pop from empty linkedlist
@@ -401,7 +404,7 @@ T LinkedList<T>::pop_back() {
 
 
 template <typename T>
-T LinkedList<T>::pop_front() {
+inline T LinkedList<T>::pop_front() {
     T elem(m_head->next->value);
 
     // will break when pop from empty linkedlist

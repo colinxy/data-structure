@@ -4,55 +4,74 @@
 #ifndef MAXHEAP_H
 #define MAXHEAP_H
 
-
-#include <utility>
+#include <cstddef>  // for std::size_t
+#include <utility>  // for std::swap
 
 
 template <class T>
 class MaxHeap {
 public:
       // constructor
-    MaxHeap(size_t capacity = 8);
+    MaxHeap(std::size_t capacity = 8);
       // copy constructor
-    MaxHeap(const MaxHeap<T> &, size_t capacity = 8);
+    MaxHeap(const MaxHeap<T> &, std::size_t capacity = 8);
+      // assignment operator
+    MaxHeap<T> &operator= (const MaxHeap<T> &);
       // destructor
     ~MaxHeap();
 
       // accessor
-    size_t   capacity() const;
-    size_t   size()     const;
-    const T& peek()     const;
+    std::size_t   capacity() const;
+    std::size_t   size()     const;
+    const T&      peek()     const;
 
       // mutator
     void push(const T&);
     T    pop();
     T    pop_push(const T&);
 
-private:
-    void siftdown(size_t);
+      // override swap
+    friend void swap(MaxHeap<T> &, MaxHeap<T> &);
 
-    size_t m_capacity;
-    size_t m_size;
-    T      *m_array;
+private:
+    void siftdown(std::size_t);
+
+    std::size_t m_capacity;
+    std::size_t m_size;
+    T          *m_array;
 };
 
 
 template <class T>
-MaxHeap<T>::MaxHeap(size_t capacity) : m_capacity(capacity)
-                                     , m_size(0) {
+MaxHeap<T>::MaxHeap(std::size_t capacity)
+    : m_capacity(capacity)
+    , m_size(0) {
+
     m_array = new T[m_capacity];
 }
 
 
 template <class T>
-MaxHeap<T>::MaxHeap(const MaxHeap<T> &mh, size_t capacity) {
-    if (capacity < mh.size()) capacity = mh.size();
+MaxHeap<T>::MaxHeap(const MaxHeap<T> &mh, std::size_t capacity) {
+    if (capacity < mh.size())
+        capacity = mh.size();
 
     m_capacity = capacity;
     m_size     = 0;
 
-    for (size_t i = 0; i < mh.size(); ++i)
+    for (std::size_t i = 0; i < mh.size(); ++i)
         m_array[m_size++];
+}
+
+
+template <typename T>
+MaxHeap<T> & MaxHeap<T>::operator= (const MaxHeap<T> &rhs) {
+    if (this != &rhs) {
+        MaxHeap<T> temp(rhs);
+        swap(*this, temp);
+    }
+
+    return *this;
 }
 
 
@@ -62,14 +81,22 @@ MaxHeap<T>::~MaxHeap() {
 }
 
 
+template <typename T>
+void swap(MaxHeap<T> &lhs, MaxHeap<T> &rhs) {
+    std::swap(lhs.m_capacity, rhs.m_capacity);
+    std::swap(lhs.m_size,     rhs.m_size);
+    std::swap(lhs.m_array,    rhs.m_array);
+}
+
+
 template <class T>
-size_t MaxHeap<T>::capacity() const {
+std::size_t MaxHeap<T>::capacity() const {
     return m_capacity;
 }
 
 
 template <class T>
-size_t MaxHeap<T>::size() const {
+std::size_t MaxHeap<T>::size() const {
     return m_size;
 }
 
@@ -86,10 +113,10 @@ void MaxHeap<T>::push(const T& elem) {
 
     m_array[m_size++] = elem;
 
-    size_t index = m_size - 1;
+    std::size_t index = m_size - 1;
 
     while (index != 0 && m_array[index] > m_array[(index-1)/2]) {
-        swap(m_array[index], m_array[(index-1)/2]);
+        std::swap(m_array[index], m_array[(index-1)/2]);
 
         index = (index - 1) / 2;
     }
@@ -121,10 +148,10 @@ T MaxHeap<T>::pop_push(const T& elem) {
 
 
 template <class T>
-void MaxHeap<T>::siftdown(size_t index) {
+void MaxHeap<T>::siftdown(std::size_t index) {
     while (index < m_size) {
-        size_t left  = index * 2 + 1;
-        size_t right = index * 2 + 2;
+        std::size_t left  = index * 2 + 1;
+        std::size_t right = index * 2 + 2;
 
         // neither left or right is within index
         if (left >= m_size) return;
@@ -132,7 +159,7 @@ void MaxHeap<T>::siftdown(size_t index) {
         // left is within range, right is not
         if (right == m_size) {
             if (m_array[index] < m_array[left]) {
-                swap(m_array[index], m_array[left]);
+                std::swap(m_array[index], m_array[left]);
             }
             return;
         }
@@ -142,15 +169,15 @@ void MaxHeap<T>::siftdown(size_t index) {
             if (m_array[index] > m_array[right]) {
                 return;
             } else /* m_array[index] < m_array[right] */ {
-                swap(m_array[index], m_array[right]);
+                std::swap(m_array[index], m_array[right]);
                 index = right;
             }
         } else /* m_array[index] < m_array[left] */ {
             if (m_array[left] > m_array[right]) {
-                swap(m_array[index], m_array[left]);
+                std::swap(m_array[index], m_array[left]);
                 index = left;
             } else /* m_array[left] < m_array[right] */ {
-                swap(m_array[index], m_array[right]);
+                std::swap(m_array[index], m_array[right]);
                 index = right;
             }
         }

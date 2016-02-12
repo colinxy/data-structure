@@ -11,6 +11,9 @@
 #ifndef SINGLYLINKED_H
 #define SINGLYLINKED_H
 
+#include <ostream>  // for std::ostream
+#include <cstddef>  // for std::size_t
+
 
 template <typename T>
 class SinglyLinkedIter;
@@ -43,19 +46,19 @@ public:
     // const_iterator end()   const;
 
       // accessor
-    bool     empty() const;
-    size_t   size () const;
-    const T& front() const;
-    T&       front();
-    const T& operator[] (size_t index) const;
-    T&       operator[] (size_t index);
+    bool        empty() const;
+    std::size_t size () const;
+    const T&    front() const;
+    T&          front();
+    const T&    operator[] (std::size_t index) const;
+    T&          operator[] (std::size_t index);
 
       // mutator
     void     push_front(const T& elem);
-    void     insert(size_t index, const T& elem);
+    void     insert(std::size_t index, const T& elem);
     // bool     insert_after(iterator it, const T& elem);
     T        pop_front();
-    T        pop(size_t index);
+    T        pop(std::size_t index);
     // T        pop_after(iterator it, const T& elem);
 
       // swap two singly linked list
@@ -76,14 +79,14 @@ private:
             : value(val), next(nxt) {}
     };
 
-    size_t m_size;
-    Node  *m_front;
+    std::size_t m_size;
+    Node       *m_front;
 };
 
 
 template <typename T>
 inline void swap(SinglyLinked<T> &a, SinglyLinked<T> &b) {
-    size_t size = a.m_size;
+    std::size_t size = a.m_size;
     a.m_size = b.m_size;
     b.m_size = size;
 
@@ -97,7 +100,7 @@ inline void swap(SinglyLinked<T> &a, SinglyLinked<T> &b) {
 // class SinglyLinkedIter {
 // public:
 //       // constructor
-//     SinglyLinkedIter(const SinglyLinked<T> &sl, size_t pos);
+//     SinglyLinkedIter(const SinglyLinked<T> &sl, std::size_t pos);
 //     SinglyLinkedIter(const SinglyLinked<T> &sl, bool front);
 
 //       // operator
@@ -114,7 +117,7 @@ inline void swap(SinglyLinked<T> &a, SinglyLinked<T> &b) {
 // class SinglyLinkedConstIter {
 // public:
 //     // constructor
-//     SinglyLinkedConstIter(const SinglyLinked<T> &sl, size_t pos);
+//     SinglyLinkedConstIter(const SinglyLinked<T> &sl, std::size_t pos);
 //     SinglyLinkedConstIter(const SinglyLinked<T> &sl, bool front);
 
 //     // operator
@@ -131,13 +134,13 @@ inline void swap(SinglyLinked<T> &a, SinglyLinked<T> &b) {
 // TODO: rewrite with constant iterator
 template <typename T>
 inline std::ostream& operator<< (std::ostream &output,
-                          const SinglyLinked<T> &singly_linked) {
+                                 const SinglyLinked<T> &singly_linked) {
     output << "[";
 
     typename SinglyLinked<T>::Node *current = singly_linked.m_front;
     while (current != nullptr) {
         output << current->value;
-        if (current->next != nullptr) {
+        if (current->next != nullptr)
             output << ", ";
 
         current = current->next;
@@ -161,6 +164,7 @@ SinglyLinked<T>::SinglyLinked()
 }
 
 
+// node insertion with reference pointer (pointer to pointer)
 template <typename T>
 SinglyLinked<T>::SinglyLinked(const SinglyLinked<T> &rhs)
     : m_size(rhs.size())
@@ -169,7 +173,7 @@ SinglyLinked<T>::SinglyLinked(const SinglyLinked<T> &rhs)
     Node **end_ref = &m_front;
     const Node *elem_rhs = rhs.m_front;
 
-    for (size_t i = 0; i < size(); ++i) {
+    for (std::size_t i = 0; i < size(); ++i) {
         *end_ref = new Node(elem_rhs->value);
 
         elem_rhs = elem_rhs->next;
@@ -245,7 +249,7 @@ inline bool SinglyLinked<T>::empty() const {
 
 
 template <typename T>
-inline size_t SinglyLinked<T>::size() const {
+inline std::size_t SinglyLinked<T>::size() const {
     return m_size;
 }
 
@@ -265,9 +269,9 @@ inline T& SinglyLinked<T>::front() {
 
 
 template <typename T>
-inline const T& SinglyLinked<T>::operator[] (size_t index) const {
+inline const T& SinglyLinked<T>::operator[] (std::size_t index) const {
     Node *current = m_front;
-    for (size_t i = 0; i < index; ++i) {
+    for (std::size_t i = 0; i < index; ++i) {
         current = current->next;
     }
 
@@ -276,9 +280,9 @@ inline const T& SinglyLinked<T>::operator[] (size_t index) const {
 
 
 template <typename T>
-inline T& SinglyLinked<T>::operator[] (size_t index) {
+inline T& SinglyLinked<T>::operator[] (std::size_t index) {
     Node *current = m_front;
-    for (size_t i = 0; i < index; ++i) {
+    for (std::size_t i = 0; i < index; ++i) {
         current = current->next;
     }
 
@@ -304,14 +308,14 @@ inline void SinglyLinked<T>::push_front(const T& elem) {
 
 
 template <typename T>
-void SinglyLinked<T>::insert(size_t index, const T& elem) {
+void SinglyLinked<T>::insert(std::size_t index, const T& elem) {
     Node *node = new Node(elem);
     // if fail to construct new node
     // C++ will throw bad_alloc
 
     // navigate to element at index
     Node **current = &m_front;
-    for (size_t i = 0; i < index; ++i) {
+    for (std::size_t i = 0; i < index; ++i) {
         current = &((*current)->next);
     }
 
@@ -337,9 +341,9 @@ inline T SinglyLinked<T>::pop_front() {
 
 
 template <typename T>
-T SinglyLinked<T>::pop(size_t index) {
+T SinglyLinked<T>::pop(std::size_t index) {
     Node **current = &m_front;
-    for (size_t i = 0; i < index; ++i) {
+    for (std::size_t i = 0; i < index; ++i) {
         current = &((*current)->next);
     }
 
@@ -358,9 +362,9 @@ T SinglyLinked<T>::pop(size_t index) {
  ****************************/
 
 // template <typename T>
-// SinglyLinkedIter<T>::SinglyLinkedIter(const SinglyLinked<T> &sl, size_t pos) {
+// SinglyLinkedIter<T>::SinglyLinkedIter(const SinglyLinked<T> &sl, std::size_t pos) {
 //     m_ptr = sl.m_front;
-//     for (size_t i = 0; i < pos; ++i) {
+//     for (std::size_t i = 0; i < pos; ++i) {
 //         m_ptr = m_ptr->next;
 //     }
 // }
@@ -414,9 +418,9 @@ T SinglyLinked<T>::pop(size_t index) {
 //  *********************************/
 
 // template <typename T>
-// SinglyLinkedConstIter<T>::SinglyLinkedConstIter(const SinglyLinked<T> &sl, size_t pos) {
+// SinglyLinkedConstIter<T>::SinglyLinkedConstIter(const SinglyLinked<T> &sl, std::size_t pos) {
 //     m_ptr = sl.m_front;
-//     for (size_t i = 0; i < pos; ++i) {
+//     for (std::size_t i = 0; i < pos; ++i) {
 //         m_ptr = m_ptr->next;
 //     }
 // }

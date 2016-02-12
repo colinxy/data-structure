@@ -1,20 +1,20 @@
 // queue.cpp
 
 
+#include "queue.h"
 #include <iostream>
 #include <utility>
 #include <stdexcept>
-#include "queue.h"
 using namespace std;
 
 
-Queue::Queue(size_t capacity) {
-    m_capacity = capacity;
-    m_queue = new int[capacity];
+Queue::Queue(size_t capacity)
+    : m_capacity(capacity)
+    , m_size(0)
+    , m_front(0)
+    , m_back(0) {
 
-    m_size  = 0;
-    m_front = 0;
-    m_back  = 0;
+    m_queue = new int[capacity];
 }
 
 
