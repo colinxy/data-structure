@@ -5,26 +5,34 @@
 #define RED_BLACK_TREE_H
 
 
-template <class T>
+#include <cstddef>
+#include <vector>
+
+template <typename T>
 class RedBlackTree {
 public:
       // constructor
     RedBlackTree();
       // copy constructor
     RedBlackTree(const RedBlackTree<T> &);
+      // assignment operator
+    RedBlackTree &operator=(const RedBlackTree &);
       // destructor
     ~RedBlackTree();
 
       // accessor
-    bool     empty()   const;
-    size_t   size()    const;
-    bool     hasElem() const;
-    const T& max()     const;
-    const T& min()     const;
+    bool        empty()   const;
+    std::size_t size()    const;
+    bool        hasElem() const;
+    const T&    max()     const;
+    const T&    min()     const;
 
       // mutator
     bool insert (const T& elem);
     bool pop    (const T& elem);
+
+      // traversal
+    void toVector(std::vector<T> &) const;
 
 private:
     struct Node {
@@ -44,38 +52,41 @@ private:
       // helper function
     void navigate(Node**, const T&) const;
     void delNodes(Node*);
+    void traverse(Node*, std::vector<T> &) const;
 
-    Node   *m_root;
-    size_t m_size;
+    Node       *m_root;
+    std::size_t m_size;
 };
 
 
-template <class T>
-RedBlackTree<T>::RedBlackTree() : m_root(nullptr) {
+template <typename T>
+RedBlackTree<T>::RedBlackTree()
+    : m_root(nullptr)
+    , msize(0) {
 }
 
 
-template <class T>
+template <typename T>
 RedBlackTree<T>::~RedBlackTree() {
     delNodes(m_root);
 }
 
 
-template <class T>
+template <typename T>
 bool RedBlackTree<T>::empty() const {
     return m_root == nullptr;
 }
 
 
-template <class T>
-size_t RedBlackTree<T>::size() const {
+template <typename T>
+std::size_t RedBlackTree<T>::size() const {
     return m_size;
 }
 
 
-template <class T>
+template <typename T>
 bool RedBlackTree<T>::hasElem(const T& elem) const {
-    Node *current (m_root);
+    Node *current = m_root;
 
     while (current != nullptr) {
         if (elem == current->value) {
@@ -94,12 +105,15 @@ bool RedBlackTree<T>::hasElem(const T& elem) const {
 /*
  * Both min and max functions
  * crashes when applied to an empty tree.
- * check if the tree is empty before applying
+ *
+ * It is also meaningless to return a value
+ * of type T, so it is decided to let the
+ * program produce the error
  */
 
-template <class T>
-const T& RedBlackTree<T>::max() const {
-    Node *minimum (m_root);
+template <typename T>
+const T& RedBlackTree<T>::min() const {
+    Node *minimum = m_root;
 
     while (minimum->left != nullptr) {
         minimum = minimum->left;
@@ -109,9 +123,9 @@ const T& RedBlackTree<T>::max() const {
 }
 
 
-template <class T>
-const T& RedBlackTree<T>::min() const {
-    Node *maximum (m_root);
+template <typename T>
+const T& RedBlackTree<T>::max() const {
+    Node *maximum = m_root;
 
     while (maximum->right != nullptr) {
         maximum = maximum->right;
@@ -121,22 +135,16 @@ const T& RedBlackTree<T>::min() const {
 }
 
 
-template <class T>
+template <typename T>
 bool RedBlackTree<T>::insert(const T& elem) {
-    Node *node = new Node(elem);
-    if (node == nullptr) return false;
+    Node **current = &m_root;
 
-    Node **current (&m_root);
-
-    while (*current != nullptr) {
-        if (elem < (*current)->value) {
-            current = &((*current)->left);
-        } else /* elem >= (*current)->value */ {
-            current = &((*current)->right);
-        }
+    navigate(current, elem);
+    if ((*current)->value == elem) {
+        return false;
     }
 
-    *current = node;
+    *current = new Node(elem);
     ++m_size;
 
     // TODO: maintain red_black_tree invariant
@@ -145,10 +153,10 @@ bool RedBlackTree<T>::insert(const T& elem) {
 }
 
 
-template <class T>
+template <typename T>
 bool RedBlackTree<T>::pop(const T& elem) {
 
-    Node **toDel (&m_root);
+    Node **toDel = &m_root;
 
     navigate(toDel, elem);
 
@@ -156,19 +164,10 @@ bool RedBlackTree<T>::pop(const T& elem) {
     if (*toDel == nullptr)
         return false;
 
-    Node **toSwap (toDel);
+    // element is a leaf
+    if ((*toDel)->left == nullptr &&
+        (*toDel)->right == nullptr) {
 
-    if ((*toSwap)->left != nullptr) {
-        // first find biggest element in left node, if possible
-        while ((*toSwap)->right != nullptr) {
-            toSwap = &((*toSwap)->right);
-        }
-    } else if ((*toSwap)->right != nullptr) {
-        // then find smallest element in right node, if possible
-        while ((*toSwap)->left != nullptr) {
-            toSwap = &((*toSwap)->left);
-        }
-    } else /* element is a leaf */ {
         delete *toDel;
         *toDel = nullptr;
 
@@ -176,33 +175,73 @@ bool RedBlackTree<T>::pop(const T& elem) {
         return true;
     }
 
-    *toSwap->left  = (*toDel)->left;
-    *toSwap->right = (*toDel)->right;
+    // try to find its successor
 
-    delete *toDel;
-    *toDel = *toSwap;
-    *toSwap = nullptr;
+    // successor does not exist
+    if ((*toDel)->right == nullptr) {
+        Node *leftChild ((*toDel)->left);
+        delete *toDel;
+        *toDel = leftChild;
+    }
+
+    else {
+        Node **successor = (*toDel)->right;
+
+        while ((*successor)->left != nullptr) {
+            successor = &((*successor)->left);
+        }
+
+        // connect right child of successor to
+        // successor's parent
+        Node *suc = *successor;
+        *successor = suc->right;
+
+        suc->left = (*toDel)->left;
+        suc->right = (*toDel)->right;
+
+        delete *toDel;
+        *toDel = suc;
+    }
+
+    // TODO: maintain red_black_tree invariant
 
     --m_size;
     return true;
 }
 
 
-template <class T>
-void RedBlackTree<T>::navigate(Node** &current, const T& elem) const {
+/*
+ * The content of the tree is only copied once
+ *
+ * Content of the tree will be appended to the
+ * back of the vector
+ */
+
+template <typename T>
+void RedBlackTree::toVector(std::vector<T> &vec) const {
+    traverse(m_root, vec);
+}
+
+
+/*
+ * private helper function
+ */
+
+template <typename T>
+void RedBlackTree<T>::navigate(Node** &current,
+                               const T &elem) const {
     while (*current != nullptr) {
-        if (elem == (*current)->value) {
+        if (elem == (*current)->value)
             break;
-        } else if (elem < (*current)->value) {
+        else if (elem < (*current)->value)
             current = &((*current)->left);
-        } else /* elem > (*toDel)->value */ {
+        else /* elem > (*current)->value */
             current = &((*current)->right);
-        }
     }
 }
 
 
-template <class T>
+template <typename T>
 void RedBlackTree<T>::delNodes(Node *root) {
     if (root == nullptr)
         return;
@@ -211,6 +250,19 @@ void RedBlackTree<T>::delNodes(Node *root) {
     delNodes(root->right);
 
     delete root;
+}
+
+
+// in-order traversal
+template <typename T>
+void RedBlackTree<T>::traverse(Node* root,
+                               std::vector<T> &vec) const {
+    if (root == nullptr)
+        return;
+
+    traverse(root->left, vec);
+    vec.push_back(root->value);
+    traverse(root->right, vec);
 }
 
 
