@@ -7,6 +7,7 @@
 
 #include <cstddef>
 #include <vector>
+#include <utility>
 
 template <typename T>
 class RedBlackTree {
@@ -16,16 +17,16 @@ public:
       // copy constructor
     RedBlackTree(const RedBlackTree<T> &);
       // assignment operator
-    RedBlackTree &operator=(const RedBlackTree &);
+    RedBlackTree &operator=(const RedBlackTree<T> &);
       // destructor
     ~RedBlackTree();
 
       // accessor
-    bool        empty()   const;
-    std::size_t size()    const;
-    bool        hasElem() const;
-    const T&    max()     const;
-    const T&    min()     const;
+    bool        empty()            const;
+    std::size_t size()             const;
+    bool        contains(const T&) const;
+    const T&    max()              const;
+    const T&    min()              const;
 
       // mutator
     bool insert (const T& elem);
@@ -35,24 +36,31 @@ public:
     void toVector(std::vector<T> &) const;
 
 private:
+    enum Color {RED, BLACK};
+
     struct Node {
-        T    value;
-        Node *left;
-        Node *right;
+        const T value;
+        Node   *left;
+        Node   *right;
 
-        bool black;
+        Color color;
 
-        Node(const T& val, bool is_black = true)
+        Node(const T& val, Color c = BLACK)
             : value(val)
             , left(nullptr)
             , right(nullptr)
-            , black(is_black) {}
-    }
+            , color(c) {}
+    };
 
-      // helper function
-    void navigate(Node**, const T&) const;
+      // navigate to the node with given value
+      // return whether the given node with given value exist
+    bool navigate(Node** &, const T&) const;
+      // copying subtree
+    Node *copyNodes(const Node*);
+      // deleting subtree
     void delNodes(Node*);
-    void traverse(Node*, std::vector<T> &) const;
+      // in-order traversal
+    void traverse(const Node*, std::vector<T> &) const;
 
     Node       *m_root;
     std::size_t m_size;
@@ -62,7 +70,27 @@ private:
 template <typename T>
 RedBlackTree<T>::RedBlackTree()
     : m_root(nullptr)
-    , msize(0) {
+    , m_size(0) {
+}
+
+
+template <typename T>
+RedBlackTree<T>::RedBlackTree(const RedBlackTree<T> &rhs)
+    : m_size(rhs.m_size) {
+
+    m_root = copyNodes(rhs.m_root);
+}
+
+
+template <typename T>
+RedBlackTree<T> & RedBlackTree<T>::operator= (const RedBlackTree<T> &rhs) {
+    if (&rhs != this) {
+        RedBlackTree tmp(rhs);
+        std::swap(this->m_root, tmp.m_root);
+        std::swap(this->m_size, tmp.m_size);
+    }
+
+    return *this;
 }
 
 
@@ -85,7 +113,7 @@ std::size_t RedBlackTree<T>::size() const {
 
 
 template <typename T>
-bool RedBlackTree<T>::hasElem(const T& elem) const {
+bool RedBlackTree<T>::contains(const T& elem) const {
     Node *current = m_root;
 
     while (current != nullptr) {
@@ -139,8 +167,7 @@ template <typename T>
 bool RedBlackTree<T>::insert(const T& elem) {
     Node **current = &m_root;
 
-    navigate(current, elem);
-    if ((*current)->value == elem) {
+    if (navigate(current, elem)) {
         return false;
     }
 
@@ -164,17 +191,6 @@ bool RedBlackTree<T>::pop(const T& elem) {
     if (*toDel == nullptr)
         return false;
 
-    // element is a leaf
-    if ((*toDel)->left == nullptr &&
-        (*toDel)->right == nullptr) {
-
-        delete *toDel;
-        *toDel = nullptr;
-
-        --m_size;
-        return true;
-    }
-
     // try to find its successor
 
     // successor does not exist
@@ -185,7 +201,7 @@ bool RedBlackTree<T>::pop(const T& elem) {
     }
 
     else {
-        Node **successor = (*toDel)->right;
+        Node **successor = &((*toDel)->right);
 
         while ((*successor)->left != nullptr) {
             successor = &((*successor)->left);
@@ -218,26 +234,42 @@ bool RedBlackTree<T>::pop(const T& elem) {
  */
 
 template <typename T>
-void RedBlackTree::toVector(std::vector<T> &vec) const {
+void RedBlackTree<T>::toVector(std::vector<T> &vec) const {
     traverse(m_root, vec);
 }
 
 
 /*
- * private helper function
+ * private helper functions
  */
 
+// navigate to the node that contains elem
 template <typename T>
-void RedBlackTree<T>::navigate(Node** &current,
+bool RedBlackTree<T>::navigate(Node** &current,
                                const T &elem) const {
     while (*current != nullptr) {
         if (elem == (*current)->value)
-            break;
+            return true;
         else if (elem < (*current)->value)
             current = &((*current)->left);
         else /* elem > (*current)->value */
             current = &((*current)->right);
     }
+
+    return false;
+}
+
+
+template <typename T>
+typename RedBlackTree<T>::Node *RedBlackTree<T>::copyNodes(const Node* src) {
+    if (src == nullptr)
+        return nullptr;
+
+    Node *copied  = new Node(src->value, src->color);
+    copied->left  = copyNodes(src->left);
+    copied->right = copyNodes(src->right);
+
+    return copied;
 }
 
 
@@ -255,7 +287,7 @@ void RedBlackTree<T>::delNodes(Node *root) {
 
 // in-order traversal
 template <typename T>
-void RedBlackTree<T>::traverse(Node* root,
+void RedBlackTree<T>::traverse(const Node* root,
                                std::vector<T> &vec) const {
     if (root == nullptr)
         return;

@@ -1,7 +1,9 @@
 CXX = g++
 
 PROG     = test_tree.out
-CPPFLAGS = -std=c++11 -Wall -g
+CPPFLAGS = -std=c++11 -Wall -Wextra \
+    -Wno-sign-compare -Werror=return-type \
+    -fsanitize=address -fno-omit-frame-pointer
 OBJS     = test_tree.o
 
 $(PROG) : $(OBJS)
