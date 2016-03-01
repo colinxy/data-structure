@@ -45,20 +45,20 @@ void test_acc_mut() {
      * deletion
      */
     for (int i = 0; i < 10; ++i) {
-        assert(rbt.pop(i));
+        assert(rbt.erase(i));
     }
     assert(rbt.empty());
-    assert(!rbt.pop(0));
+    assert(!rbt.erase(0));
     // insertion and deletion
     assert(rbt.insert(10));  // 10
-    assert(!rbt.pop(3));  // 10
+    assert(!rbt.erase(3));  // 10
     assert(rbt.insert(3));  // 3 10
-    assert(!rbt.pop(7));  // 10 3
+    assert(!rbt.erase(7));  // 10 3
     assert(rbt.insert(5));  // 3 5 10
-    assert(rbt.pop(3));  // 5 10
-    assert(rbt.pop(10));  // 5
+    assert(rbt.erase(3));  // 5 10
+    assert(rbt.erase(10));  // 5
     assert(rbt.size() == 1);  // 5
-    assert(rbt.pop(5));  //
+    assert(rbt.erase(5));  //
     assert(rbt.empty());  //
 }
 
@@ -84,9 +84,9 @@ void test_cons_copy() {
     for (int i = 0; i < 10; ++i) {
         assert(rbtree_copied.contains(i));
     }
-    assert(rbtree_copied.pop(9));
+    assert(rbtree_copied.erase(9));
     for (int i = 0; i < 8; ++i) {
-        assert(rbtree_copied.pop(i));
+        assert(rbtree_copied.erase(i));
     }
 
     // assignment test
@@ -122,7 +122,7 @@ void test_random() {
     }
 
     // for (int i = 0; i < size; ++i) {
-    //     assert(nums_tree.pop(nums_vec[i]));
+    //     assert(nums_tree.erase(nums_vec[i]));
     // }
     // assert(nums_tree.empty());
 
@@ -138,7 +138,7 @@ void test_random() {
         assert(nums_vec[i] == nums_vec_assigned[i]);
     }
     for (int i = 0; i < size; ++i) {
-        assert(nums_tree_assigned.pop(nums_vec_assigned[i]));
+        assert(nums_tree_assigned.erase(nums_vec_assigned[i]));
     }
     assert(nums_tree_assigned.empty());
 
@@ -154,7 +154,7 @@ void test_random() {
     }
 
     for (int i = 0; i < size; ++i) {
-        assert(nums_tree_copied.pop(nums_vec_copied[i]));
+        assert(nums_tree_copied.erase(nums_vec_copied[i]));
     }
     assert(nums_tree_copied.empty());
 }

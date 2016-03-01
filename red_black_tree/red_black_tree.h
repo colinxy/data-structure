@@ -24,13 +24,14 @@ public:
       // accessor
     bool        empty()            const;
     std::size_t size()             const;
+    std::size_t depth()            const;
     bool        contains(const T&) const;
     const T&    max()              const;
     const T&    min()              const;
 
       // mutator
     bool insert (const T& elem);
-    bool pop    (const T& elem);
+    bool erase  (const T& elem);
 
       // traversal
     void toVector(std::vector<T> &) const;
@@ -42,8 +43,7 @@ private:
         const T value;
         Node   *left;
         Node   *right;
-
-        Color color;
+        Color   color;
 
         Node(const T& val, Color c = BLACK)
             : value(val)
@@ -62,21 +62,33 @@ private:
       // in-order traversal
     void traverse(const Node*, std::vector<T> &) const;
 
+      // helper functions for maintaining red-black-tree invariant
+    Color color(Node*);
+    Node *rotateLeft(Node*);
+    Node *rotateRight(Node*);
+    void  flipColors(Node*);
+
+      // recursize node insertion
+    Node *insertNode(Node *, const T&);
+
     Node       *m_root;
     std::size_t m_size;
+    std::size_t m_depth;
 };
 
 
 template <typename T>
 RedBlackTree<T>::RedBlackTree()
     : m_root(nullptr)
-    , m_size(0) {
+    , m_size(0)
+    , m_depth(0) {
 }
 
 
 template <typename T>
 RedBlackTree<T>::RedBlackTree(const RedBlackTree<T> &rhs)
-    : m_size(rhs.m_size) {
+    : m_size(rhs.m_size)
+    , m_depth(rhs.m_depth) {
 
     m_root = copyNodes(rhs.m_root);
 }
@@ -86,8 +98,9 @@ template <typename T>
 RedBlackTree<T> & RedBlackTree<T>::operator= (const RedBlackTree<T> &rhs) {
     if (&rhs != this) {
         RedBlackTree tmp(rhs);
-        std::swap(this->m_root, tmp.m_root);
-        std::swap(this->m_size, tmp.m_size);
+        std::swap(this->m_root,  tmp.m_root);
+        std::swap(this->m_size,  tmp.m_size);
+        std::swap(this->m_depth, tmp.m_depth);
     }
 
     return *this;
@@ -109,6 +122,12 @@ bool RedBlackTree<T>::empty() const {
 template <typename T>
 std::size_t RedBlackTree<T>::size() const {
     return m_size;
+}
+
+
+template <typename T>
+std::size_t RedBlackTree<T>::depth() const {
+    return m_depth;
 }
 
 
@@ -165,29 +184,30 @@ const T& RedBlackTree<T>::max() const {
 
 template <typename T>
 bool RedBlackTree<T>::insert(const T& elem) {
-    Node **current = &m_root;
-
-    if (navigate(current, elem)) {
+    Node *newRoot = insertNode(m_root, elem);
+    if (newRoot == nullptr)
         return false;
+
+    m_root = newRoot;
+    if (m_root->color == RED) {
+        ++m_depth;
+        m_root->color = BLACK;
     }
 
-    *current = new Node(elem);
     ++m_size;
-
-    // TODO: maintain red_black_tree invariant
-
     return true;
 }
 
 
+// TODO : maintain depth when deleting
 template <typename T>
-bool RedBlackTree<T>::pop(const T& elem) {
+bool RedBlackTree<T>::erase(const T& elem) {
 
     Node **toDel = &m_root;
 
     navigate(toDel, elem);
 
-    // pop unsuccessful, element not found
+    // erase unsuccessful, element not found
     if (*toDel == nullptr)
         return false;
 
@@ -295,6 +315,116 @@ void RedBlackTree<T>::traverse(const Node* root,
     traverse(root->left, vec);
     vec.push_back(root->value);
     traverse(root->right, vec);
+}
+
+
+/*
+ *   root
+ *     |
+ *     |  red
+ *     +--------+
+ *    /        / \
+ *   /        /   \
+ *
+ *            root
+ *              |
+ *        red   |
+ *     +--------+
+ *    / \        \
+ *   /   \        \
+ *
+ */
+
+
+template <typename T>
+typename RedBlackTree<T>::Color RedBlackTree<T>::color(Node* node) {
+    if (node == nullptr)
+        return BLACK;
+
+    return node->color;
+}
+
+
+// rotate RED right node to RED left node
+template <typename T>
+typename RedBlackTree<T>::Node *RedBlackTree<T>::rotateLeft(Node* root) {
+    Node *rootLeft  = root;
+    Node *rootRight = root->right;
+
+    rootLeft->right = rootRight->left;
+    rootRight->left = rootLeft;
+
+    // maintain color
+    rootRight->color = rootLeft->color;
+    rootLeft->color  = RED;
+
+    return rootRight;
+}
+
+
+// rotate RED left node to RED right node
+template <typename T>
+typename RedBlackTree<T>::Node *RedBlackTree<T>::rotateRight(Node* root) {
+    Node *rootLeft  = root->left;
+    Node *rootRight = root;
+
+    rootRight->left = rootLeft->right;
+    rootLeft->right = rootRight;
+
+    // maintain color
+    rootLeft->color = rootRight->color;
+    rootRight->color = RED;
+
+    return rootLeft;
+}
+
+
+// flip RED left and right child, propagate up RED node
+template <typename T>
+void RedBlackTree<T>::flipColors(Node *root) {
+    root->left->color  = BLACK;
+    root->right->color = BLACK;
+
+    root->color = RED;
+}
+
+
+template <typename T>
+typename RedBlackTree<T>::Node *RedBlackTree<T>::insertNode(Node *root,
+                                                            const T &elem) {
+    if (root == nullptr)
+        return new Node(elem, RED);
+
+    if (elem == root->value)
+        return nullptr;
+
+    // update subtree after insertion
+    if (elem < root->value) {
+        Node *left = insertNode(root->left, elem);
+        if (left == nullptr)
+            return nullptr;
+
+        root->left = left;
+    }
+    else {  // elem > root->value
+        Node *right = insertNode(root->right, elem);
+        if (right == nullptr)
+            return nullptr;
+
+        root->right = right;
+    }
+
+    // maintain red black tree invariant
+    if (color(root->right) == RED && color(root->left) == BLACK)
+        root = rotateLeft(root);
+
+    if (color(root->left) == RED && color(root->left->left) == RED)
+        root = rotateRight(root);
+
+    if (color(root->left) == RED && color(root->right) == RED)
+        flipColors(root);
+
+    return root;
 }
 
 
