@@ -10,18 +10,21 @@ using namespace std;
  */
 
 
-SegTreeSum::SegTreeSum(size_t size) : m_size(size)
-                                    , m_sums(computeCapacity(size)) {
+SegTreeSum::SegTreeSum(size_t size)
+    : m_size(size)
+    , m_sums(computeCapacity(size)) {
 }
 
 
-SegTreeSum::SegTreeSum(int* arr, size_t size) : m_size(size)
-                                              , m_sums(computeCapacity(size)) {
+SegTreeSum::SegTreeSum(int* arr, size_t size)
+    : m_size(size)
+    , m_sums(computeCapacity(size)) {
+
     construct(arr, 0, 0, size);
 }
 
 
-ostream& operator<< (ostream& output, SegTreeSum sts) {
+ostream& operator<< (ostream& output, SegTreeSum &sts) {
     output << '[';
     for (size_t i = 0; i < sts.m_sums.size(); ++i) {
         output << sts.m_sums[i] << ", ";

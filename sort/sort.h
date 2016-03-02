@@ -1,24 +1,20 @@
 // sort.h
 
+
 // WARNING: sorting method here assumes
 //          random access capabilities
 
 #ifndef SORT_H
 #define SORT_H
 
+#include <utility>  // for std::swap
 
-template <class T>
-void exchange(T &a, T &b) {
-    T tmp(a);
-    a = b;
-    b = tmp;
-}
 
 // TODO: implement different
 // ways of choosing piovt
 
 // end is the last element past 1
-template <class T>
+template <typename T>
 void quicksort(T *begin, T *end) {
     if (end - begin <= 1) {
         return;
@@ -29,9 +25,9 @@ void quicksort(T *begin, T *end) {
 
     for (T* elem = begin+1; elem < divide; ++elem)
         if (*elem > pivot)
-            exchange(*(elem--), *(--divide));
+            std::swap(*(elem--), *(--divide));
 
-    exchange(*begin, *(divide-1));
+    std::swap(*begin, *(divide-1));
 
     quicksort(begin, divide);
     quicksort(divide, end);
@@ -39,14 +35,14 @@ void quicksort(T *begin, T *end) {
 
 
 // end is the last element past 1
-template <class T>
+template <typename T>
 void mergesort(T *begin, T *end) {
     // <= 1 element
     if (end - begin <= 1) return;
     // 2 elements
     if (end - begin == 2) {
         if (*begin > *(begin+1))
-            exchange(*begin, *(begin+1));
+            std::swap(*begin, *(begin+1));
         return;
     }
 
@@ -89,7 +85,7 @@ void mergesort(T *begin, T *end) {
 
 // end is the last element past 1
 
-template <class T>
+template <typename T>
 T& quickselect(T *begin, T *end, int n) {
     // if (n < 0 || end - begin <= n) throw "unable to find n th element";
 
@@ -98,7 +94,7 @@ T& quickselect(T *begin, T *end, int n) {
 
     for (T *elem = begin+1; elem < divide; ++elem)
         if (pivot < *elem)
-            exchange(*elem--, *--divide);
+            std::swap(*elem--, *--divide);
 
     int pivot_stat = divide - begin - 1;
 
