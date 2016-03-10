@@ -10,57 +10,84 @@
 using namespace std;
 
 
-const int SIZE = 1000000;
-int test_sorted[SIZE];
-int  lib_sorted[SIZE];
+void test_sort(const int *arr, int size, void (*sort_fn)(int*, int*)) {
+    int *test_sorted = new int[size];
+    int *lib_sorted  = new int[size];
 
+    std::copy(arr, arr+size, test_sorted);
+    std::copy(arr, arr+size, lib_sorted);
 
-void test_sort(void (*sort_fn)(int*, int*)) {
-    srand(time(NULL));
+    sort_fn(test_sorted, test_sorted+size);
+    sort(lib_sorted, lib_sorted+size);
 
-    for (int i = 0; i < SIZE; ++i) {
-        test_sorted[i] = rand();
-        lib_sorted[i]  = test_sorted[i];
-    }
-
-    sort_fn(test_sorted, test_sorted+SIZE);
-    sort(lib_sorted, lib_sorted+SIZE);
-
-    for (int i = 0; i < SIZE; ++i) {
+    for (int i = 0; i < size; ++i) {
         assert(test_sorted[i] == lib_sorted[i]);
         // cout << test_sorted[i] << endl;
     }
+
+    delete test_sorted;
+    delete lib_sorted;
 }
 
 
-void test_select(int& (*select_fn)(int*, int*, int)) {
+void test_select(const int *arr, int size,
+                 int& (*select_fn)(int*, int*, int)) {
+    // small test
     int to_select[10]{1, 2, 3, 7, 4, 9, 6, 5, 8, 0};
     assert(select_fn(to_select, to_select+10, 5) == 5);
 
-    srand(time(NULL));
+    int *test_sorted = new int[size];
+    int *lib_sorted  = new int[size];
 
-    for (int i = 0; i < SIZE; ++i) {
-        test_sorted[i] = rand();
-        lib_sorted[i]  = test_sorted[i];
-    }
+    std::copy(arr, arr+size, test_sorted);
+    std::copy(arr, arr+size, lib_sorted);
 
     int nth = rand();
-    while (nth >= SIZE) nth /= 2;
+    while (nth >= size) nth /= 2;
     // cout << nth << endl;
 
-    sort(lib_sorted, lib_sorted+SIZE);
+    sort(lib_sorted, lib_sorted+size);
     // cout << lib_sorted[nth] << endl;
-    assert(select_fn(test_sorted, test_sorted+SIZE, nth)
-           == lib_sorted[nth]);
+    assert(select_fn(test_sorted, test_sorted+size, nth) ==
+           lib_sorted[nth]);
+
+    delete test_sorted;
+    delete lib_sorted;
 }
 
 
 int main() {
-    test_sort(quicksort);
-    test_sort(mergesort);
+    srand(time(NULL));
 
-    test_select(quickselect);
+    const int SIZE = 1000000;
+    int arr[SIZE];
 
-    cout << "all tests passed" << endl;
+    for (int i = 0; i < SIZE; ++i)
+        arr[i] = rand();
+
+    {
+        auto start = clock();
+        cout << "quicksort : ";
+        test_sort(arr, SIZE, quicksort);
+        cout << (double)(clock() - start) / CLOCKS_PER_SEC << 's' << endl;
+    }
+
+    {
+        auto start = clock();
+        cout << "mergesort : ";
+        test_sort(arr, SIZE, mergesort);
+        cout << (double)(clock() - start) / CLOCKS_PER_SEC << 's' << endl;
+    }
+
+    {
+        auto start = clock();
+        cout << "heapsort  : ";
+        test_sort(arr, SIZE, heapsort);
+        cout << (double)(clock() - start) / CLOCKS_PER_SEC << 's' << endl;
+    }
+
+    test_select(arr, SIZE, quickselect);
+
+    cout << endl << "all tests passed" << endl;
     return 0;
 }

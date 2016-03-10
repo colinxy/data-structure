@@ -10,10 +10,11 @@
 #include <utility>  // for std::swap
 
 
+// end is the last element past 1
+
 // TODO: implement different
 // ways of choosing piovt
 
-// end is the last element past 1
 template <typename T>
 void quicksort(T *begin, T *end) {
     if (end - begin <= 1) {
@@ -34,7 +35,6 @@ void quicksort(T *begin, T *end) {
 }
 
 
-// end is the last element past 1
 template <typename T>
 void mergesort(T *begin, T *end) {
     // <= 1 element
@@ -47,7 +47,7 @@ void mergesort(T *begin, T *end) {
     }
 
     // sort first half and second half
-    size_t size = end - begin;
+    std::size_t size = end - begin;
     T *mid = begin + size / 2;
     mergesort(begin, mid);
     mergesort(mid, end);
@@ -56,7 +56,7 @@ void mergesort(T *begin, T *end) {
     T *left  = begin;
     T *right = mid;
     T *sorted = new T[size];
-    size_t index = 0;
+    std::size_t index = 0;
 
     while (left < mid && right < end)
         sorted[index++] = (*left < *right) ? *left++ : *right++;
@@ -76,15 +76,66 @@ void mergesort(T *begin, T *end) {
 }
 
 
+template <typename T>
+void siftdown(T *heap, std::size_t index, const std::size_t size) {
+    std::size_t curr = index;
+
+    while (curr < size) {
+        std::size_t left = curr * 2 + 1;
+        std::size_t right = curr * 2 + 2;
+
+        if (right < size) {         // both children exist
+            if (heap[curr] < heap[left])
+                if (heap[left] < heap[right]) {
+                    std::swap(heap[curr], heap[right]);
+                    curr = right;
+                    continue;
+                } else {
+                    std::swap(heap[curr], heap[left]);
+                    curr = left;
+                    continue;
+                }
+            else if (heap[curr] < heap[right]) {
+                std::swap(heap[curr], heap[right]);
+                curr = right;
+                continue;
+            }
+
+        } else if (left < size) {   // only left child exist
+            if (heap[curr] < heap[left]) {
+                std::swap(heap[curr], heap[left]);
+                curr = left;
+                continue;
+            }
+        }
+
+        break;
+    }
+}
+
+
+template <typename T>
+void heapsort(T *begin, T *end) {
+    std::size_t size = end - begin;
+
+    // start with the element in the middle
+    for (long index = size/2; index >= 0; --index)
+        siftdown(begin, index, size);
+
+    for (long index = size-1; index >= 0; --index) {
+        std::swap(begin[index], begin[0]);
+
+        siftdown(begin, 0, index /* size */);
+    }
+}
+
+
 // quick-selection returns the n th order
 // statistic of the array and runs in O(n) time in average
 // n th order statistic begins with 0.
 
 // NOTE: quick-selection will change the
 // order of the original array.
-
-// end is the last element past 1
-
 template <typename T>
 T& quickselect(T *begin, T *end, int n) {
     // if (n < 0 || end - begin <= n) throw "unable to find n th element";
