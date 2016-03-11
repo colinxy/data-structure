@@ -1,16 +1,17 @@
 // test_sort.cpp
 
 
-#include "sort.h"
 #include <iostream>
+#include "sort.h"
 #include <cassert>
 #include <cstdlib>
 #include <ctime>
 #include <algorithm>
+#include <functional>
 using namespace std;
 
 
-void test_sort(const int *arr, int size, void (*sort_fn)(int*, int*)) {
+void test_sort(const int *arr, const int size, void (*sort_fn)(int*, int*)) {
     int *test_sorted = new int[size];
     int *lib_sorted  = new int[size];
 
@@ -20,10 +21,8 @@ void test_sort(const int *arr, int size, void (*sort_fn)(int*, int*)) {
     sort_fn(test_sorted, test_sorted+size);
     sort(lib_sorted, lib_sorted+size);
 
-    for (int i = 0; i < size; ++i) {
+    for (int i = 0; i < size; ++i)
         assert(test_sorted[i] == lib_sorted[i]);
-        // cout << test_sorted[i] << endl;
-    }
 
     delete test_sorted;
     delete lib_sorted;
@@ -56,38 +55,55 @@ void test_select(const int *arr, int size,
 }
 
 
+const unsigned int SIZE = 120000;
+
 int main() {
     srand(time(NULL));
-
-    const int SIZE = 1000000;
-    int arr[SIZE];
-
+    int *arr_rand = new int[SIZE];
     for (int i = 0; i < SIZE; ++i)
-        arr[i] = rand();
+        arr_rand[i] = rand();
 
-    {
-        auto start = clock();
-        cout << "quicksort : ";
-        test_sort(arr, SIZE, quicksort);
-        cout << (double)(clock() - start) / CLOCKS_PER_SEC << 's' << endl;
+    int *arr_sorted = new int[SIZE];
+    std::copy(arr_rand, arr_rand+SIZE, arr_sorted);
+    std::sort(arr_sorted, arr_sorted+SIZE);
+
+    int *arr_reverse = new int[SIZE];
+    std::copy(arr_rand, arr_rand+SIZE, arr_reverse);
+    std::sort(arr_reverse, arr_reverse+SIZE, std::greater<int>());
+
+    // arrays goes here
+    const int *arrays[] = {arr_rand, arr_sorted, arr_reverse};
+    const char *tags[] = {"random", "sorted", "reversely sorted"};
+    const int num_arr = sizeof(arrays) / sizeof(int*);
+
+    // sorting algorithm goes here
+    typedef void (*SORT_FN)(int*, int*);
+    SORT_FN sort_algos[] = {quicksort, mergesort, heapsort};
+    const char *sort_tags[] = {"quicksort", "mergesort", "heapsort"};
+    const int num_algo = sizeof(sort_algos) / sizeof(SORT_FN);
+
+    for (int i = 0; i < num_arr; ++i) {
+        std::printf("sorting a %s array\n", tags[i]);
+
+        for (int j = 0; j < num_algo; ++j) {
+            auto start = clock();
+
+            std::printf("%-10s: ", sort_tags[j]);
+            test_sort(arrays[i], SIZE, sort_algos[j]);
+
+            std::printf("%f s\n", (double)(clock() - start) / CLOCKS_PER_SEC);
+        }
+
+        std::printf("\n");
     }
 
-    {
-        auto start = clock();
-        cout << "mergesort : ";
-        test_sort(arr, SIZE, mergesort);
-        cout << (double)(clock() - start) / CLOCKS_PER_SEC << 's' << endl;
-    }
+    // quick selection
+    test_select(arr_rand, SIZE, quickselect);
 
-    {
-        auto start = clock();
-        cout << "heapsort  : ";
-        test_sort(arr, SIZE, heapsort);
-        cout << (double)(clock() - start) / CLOCKS_PER_SEC << 's' << endl;
-    }
+    delete arr_rand;
+    delete arr_sorted;
+    delete arr_reverse;
 
-    test_select(arr, SIZE, quickselect);
-
-    cout << endl << "all tests passed" << endl;
+    cout << "all tests passed" << endl;
     return 0;
 }

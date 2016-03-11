@@ -2,7 +2,7 @@ CXX = g++
 
 PROG     = test_sort.out
 CPPFLAGS = -std=c++11 -Wall -Wextra \
-           -Wno-sign-compare -Werror=return-type \
+           -Wno-sign-compare -Werror=return-type
            -fsanitize=address -fno-omit-frame-pointer
 OBJS     = test_sort.o
 

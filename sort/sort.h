@@ -4,33 +4,53 @@
 // WARNING: sorting method here assumes
 //          random access capabilities
 
-#ifndef SORT_H
-#define SORT_H
+#ifndef SORT_H_
+#define SORT_H_
 
 #include <utility>  // for std::swap
 
-
 // end is the last element past 1
 
-// TODO: implement different
-// ways of choosing piovt
 
 template <typename T>
+inline T *medianof3(T *a, T *b, T *c) {
+    if (*a < *b)
+        if (*b < *c)            // a < b < c
+            return b;
+        else if (*a < *c)       // a < c < b
+            return c;
+        else                    // c < a < b
+            return a;
+    else
+        if (*c < *b)            // c < b < a
+            return b;
+        else if (*a < *c)       // b < a < c
+            return a;
+        else                    // b < c < a
+            return c;
+}
+
+
+// choice of pivot: median of first middle, last
+template <typename T>
 void quicksort(T *begin, T *end) {
-    if (end - begin <= 1) {
+    if (end - begin <= 1)
         return;
-    }
 
-    T &pivot  = *begin;
+    T *mid = begin + (end - begin) / 2;
+    T *pivot = medianof3(begin, mid, end-1);
+    std::swap(*begin, *pivot);
+    pivot = begin;
+
     T *divide = end;
-
     for (T* elem = begin+1; elem < divide; ++elem)
-        if (*elem > pivot)
+        if (*elem > *pivot)
             std::swap(*(elem--), *(--divide));
 
     std::swap(*begin, *(divide-1));
 
-    quicksort(begin, divide);
+    // IMPORTANT: has to use divide-1 for worse case to reduce problem size
+    quicksort(begin, divide-1);
     quicksort(divide, end);
 }
 
@@ -157,4 +177,4 @@ T& quickselect(T *begin, T *end, int n) {
 }
 
 
-#endif  // SORT_H
+#endif  // SORT_H_
